@@ -1,0 +1,492 @@
+\documentclass{IEEEcsmag}
+
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue,citecolor=blue]{hyperref}
+\expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks\do\/\do\*\do\-\do\~\do\'\do\"\do\-}
+\usepackage{upmath,color}
+
+
+\usepackage[Algorithm]{algorithm}
+\usepackage{algorithmic}
+
+
+\jvol{10}
+\jnum{22}
+\paper{8}
+\jmonth{July}
+\jname{IEEE Software}
+\jtitle{Original research paper}
+\pubyear{2026}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+
+\setcounter{secnumdepth}{0}
+
+\begin{document}
+	
+
+%\sptitle{Article Type: Description  (see below for more detail)}
+
+\title{SafeLLM4SE: Statistical Evaluation and Reporting for LLM-Based Software Engineering Systems}
+
+
+\author{Francisco Ortin}
+\affil{University of Oviedo, Leopoldo Calvo-Sotelo 18, 33005, Oviedo, Spain  \\ 
+Munster Technological University, Rossa Avenue, Bishopstown, T12 P928, Cork, Ireland}
+
+
+%\markboth{THEME/FEATURE/DEPARTMENT}{THEME/FEATURE/DEPARTMENT}
+
+\begin{abstract}
+Large language models (LLMs) are increasingly used for software engineering tasks, yet their stochastic behavior challenges the validity, reproducibility, and comparability of their evaluation. Conventional practices such as reporting a single output, an average score, or best-of-N performance can obscure variability and estimation uncertainty, potentially leading to misleading conclusions about system reliability. This article presents SafeLLM4SE, a practical methodology and reporting standard for statistically principled evaluation of LLM-based software engineering systems. Rather than treating generated outputs as deterministic artifacts, SafeLLM4SE treats them as realizations of a stochastic process and distinguishes quality, stability, and estimation uncertainty. It combines adaptive sampling with confidence intervals, distribution-aware statistical comparisons, effect sizes, and a minimum reporting standard covering model configuration, reproducibility, evaluation procedures, and resource usage. SafeLLM4SE is also provided as a open-source software package, enabling researchers and practitioners to reproduce and extend the methodology. We illustrate its application by comparing two LLMs on HumanEval, a benchmark of programming problems assessed through functional tests.
+\end{abstract}
+
+\maketitle
+
+\section{INTRODUCTION}
+\label{section:introduction}
+
+\chapteri{L}arge language models (LLMs) are rapidly becoming part of the software engineering (SE) toolchain. They are now used across a broad range of software engineering activities, including code generation, test generation, program repair, refactoring, documentation, code review, and software maintenance~\cite{Hou2024}. Nowadays, LLMs support developers in automating a diverse set of increasingly complex SE tasks and workflows~\cite{Chen2021}.
+
+However, LLM-based systems differ from many traditional SE tools in an important respect: their outputs are stochastic. Given the same prompt and nominal model configuration, repeated invocations may produce different outputs and, consequently, different software engineering outcomes. For example, an LLM may generate a program that passes all tests in one execution but produces a failing implementation in another execution of exactly the same task. Thus, the outcome of an evaluation is not necessarily a fixed property of the system, but rather an observation of an underlying stochastic process.
+
+Ouyang et al.~\cite{Ouyang2025} investigated non-determinism in ChatGPT code generation across 829 problems. They found substantial variation across repeated generations and, importantly, showed that setting the temperature to zero does not guarantee deterministic code generation. Therefore, LLM non-determinism can affect both software correctness and scientific conclusions, making it a methodological concern rather than merely an implementation detail~\cite{Ouyang2025}.
+
+The stochastic nature of LLMs also creates challenges for reproducibility. The same prompts may not produce the same outputs even under the same nominal LLM configuration~\cite{Ouyang2025}, which complicates reproducibility in contexts such as scientific research and safety-critical applications. Moreover, LLM services may change over time because of model updates or modifications to their serving infrastructure, even when the same model identifier and nominal configuration are used~\cite{Chauvin2026,Kang2026}. Reproducible evaluation therefore requires reporting not only the experimental setup, but also how stochastic outputs were sampled and evaluated~\cite{Pineau2021}.
+
+Despite this non-deterministic behavior, many researchers and practitioners continue to report a single LLM output, the average performance across a number of outputs, best-of-N (i.e., the best output among N executions), or pass@k (i.e., an estimate of the probability that at least one of $k$ generated outputs is correct). To illustrate the practical consequences, Table 1 presents hypothetical HumanEval results, in which different models are evaluated 100 times on the same set of code-generation problems, with functional correctness assessed through testing. A single-output metric identifies C as the best-performing model, whereas its average performance is lower than that of the other two models. The table also illustrates how average performance may depend on the number of samples. For example, A achieves an average performance of 71\% at N = 100, compared with 70\% for B; however, the variability of A (SD = X) is substantially greater than that of B (SD = Y). Consequently, the difference in average performance alone does not fully characterize the behavior of either model. Model A and B have similar average performance (N=100) and standard deviation, but A’s narrower 95\% confidence interval indicates a more precise estimate of its performance, making comparisons and decisions based on that estimate more reliable.
+
+Best-of-N and pass@k introduce a different limitation: they focus on whether at least one successful output is obtained, rather than on the distribution and variability of outcomes across executions. Consequently, increasing N or k can improve these metrics without any corresponding improvement in a model's typical behavior.  Such metrics may therefore favor models that occasionally produce successful outputs but are otherwise unreliable. They should therefore not be used as standalone measures when the goal is to characterize the overall stochastic behavior of LLM-based software engineering systems.
+
+
+
+\begin{table*}
+	\vspace*{4pt}
+	\caption{HumanEval results showing how point estimates, sample size, variability, and uncertainty can lead to different assessments of stochastic LLM-based systems.}
+	\label{table:example-data}
+	%\tablefont
+	%\begin{tabular*}{17.5pc}{@{}p{29pt}p{63pt}<{\raggedright}p{80pt}<{\raggedright}@{}}
+	\begin{tabular*}{\linewidth}{lllllll}
+		\toprule
+		Model & One Output & Average (N=10) & Average (N=30) & Average (N=100) & SD  & 95\% CI\\
+		\colrule
+		A     &            &                &                &                 &                                                         &                                                              \\
+		B     &            &                &                &                 &                                                         &                                                              \\
+		C     &            &                &                &                 &                                                         &                                                              \\
+		D     &            &                &                &                 &                                                         &                                                              \\
+		E     &            &                &                &                 &                                                         &                                                             \\
+		\botrule
+	\end{tabular*}\vspace*{8pt}
+\end{table*}
+
+These limitations motivate a shift from point-based to distribution-based evaluation of LLMs for SE. The output of an LLM should be regarded as a sample from a stochastic process rather than as a deterministic artifact. Accordingly, the object of evaluation is not a single output, but the underlying distribution of possible outputs and their associated performance. This perspective makes it possible to distinguish three complementary properties of an LLM-based SE system: quality (expected performance of the system), stability (how much the system's performance varies across repeated executions), and uncertainty (how precisely those quantities have been estimated from a finite number of observations).
+
+To address these issues, we propose SafeLLM4SE, a practical methodology for the statistically principled evaluation and reporting of stochastic LLM-based SE systems. SafeLLM4SE is not intended to introduce a new statistical test. Rather, it defines a minimum standard for evaluation and reporting by integrating established statistical techniques into a workflow designed for software engineering researchers and practitioners. The framework provides default recommendations while allowing justified alternatives when the characteristics of a particular experiment warrant them.
+
+SafeLLM4SE is organized around five principles:
+
+
+\begin{enumerate}
+
+\item Outputs are samples, not artifacts. For a fixed prompt, model, and configuration, each invocation is treated as an observation from a stochastic process. Evaluation therefore begins by identifying the performance metric induced by the generated artifact (e.g., pass/fail, BLEU score, or code quality).
+
+\item Distributions matter more than points. Repeated executions are used to characterize the distribution of performance rather than merely to obtain a point estimate such as an average. The framework distinguishes expected quality from variability in system performance.
+
+\item Inference should replace informal aggregation. SafeLLM4SE recommends quantifying estimation uncertainty using confidence intervals, applying statistical tests appropriate to the experimental design, and reporting effect sizes rather than relying solely on differences in means or p-values.
+
+\item Quality, stability, and uncertainty are complementary. A reliable evaluation should report not only how well a system performs on average (quality), but also how consistently it performs across executions (stability) and how precisely these quantities have been estimated (uncertainty).
+
+\item Statistical rigor should be balanced against evaluation cost. Repeated LLM invocations incur API costs, latency, and computational resources. SafeLLM4SE therefore recommends adaptive sampling: an experiment begins with an initial number of executions and continues sampling until the estimate reaches a predefined precision target or the available budget is exhausted. This replaces arbitrary rules such as “always run the benchmark 100 times” with an explicit relationship between statistical precision and evaluation cost.
+\end{enumerate}
+
+Finally, we empirically validate SafeLLM4SE using different LLMs on the HumanEval benchmark. 
+
+Our analysis illustrates how stochastic generation, sample size, and statistical analysis can affect the characterization and comparison of LLM-based software engineering systems. SafeLLM4SE is provided as an open-source Python framework~\cite{ref}.
+
+
+%\vspace*{-8pt}
+%\section{RELATED WORK}
+%\label{section:related-work}
+
+
+\vspace*{-8pt}
+\section{SafeLLM4SE}
+\label{section:SafeLLM4SE}
+
+SafeLLM4SE defines a minimum evaluation protocol and reporting standard for experimental evaluations of LLM-based software engineering systems under stochastic generation. Rather than treating an LLM output as a deterministic artifact, SafeLLM4SE models it as a realization of a stochastic process and specifies the statistical evidence that should be reported to support reliable, reproducible, and comparable experimental conclusions.
+
+
+\subsection{Probabilistic modelling}
+\label{subsection:SafeLLM4SE:probabilistic-modelling}
+
+Given a prompt $p$, model $m$, and configuration $c$, each execution of an LLM produces one realization of a random variable $Y_{p,m,c}$. Repeated executions under the same experimental conditions are treated as realizations from the underlying stochastic process governing the system's outputs.
+
+Depending on the task, each output is evaluated using a metric $M(Y)$. Examples include functional correctness of generated code (pass or fail), the number of tests passed (integer-valued), execution time, or code quality (real-valued). Let $X_{p,m,c}=M(Y_{p,m,c})$ denote the resulting random variable. The evaluation is then based on samples of $X_{p,m,c}$ and aims to characterize its underlying performance distribution $F_{p,m,c}$.
+
+SafeLLM4SE considers a target property $\theta$ of $F_{p,m,c}$, such as its mean or a success probability, and estimates it from repeated observations. This distribution captures not only the expected performance of the system, but also its variability and uncertainty. Consequently, a single observation or point estimate such as the sample mean provides only a partial characterization of system behavior. SafeLLM4SE therefore treats repeated executions and the statistical characterization of the resulting distribution as fundamental components of LLM-based software engineering evaluation.
+
+
+
+\subsection{Adaptive sampling}
+\label{subsection:SafeLLM4SE:adaptive-sampling}
+
+Instead of fixing an arbitrary number of executions, SafeLLM4SE uses adaptive sampling to determine when a sufficient number of executions has been collected to estimate $\theta$, a target property of the performance distribution $F_{p,m,c}$, with the desired precision. This avoids both undersampling, which may lead to unreliable estimates, and unnecessary executions once additional samples provide little improvement in precision. Consequently, adaptive sampling can reduce API and computational costs, as well as the associated energy consumption and carbon footprint, while maintaining a predefined level of statistical precision.
+
+For a given prompt $p$, model $m$, and configuration $c$, the procedure takes three parameters: a minimum sample size $N_{\min}$, a target confidence-interval precision $targetCIwidth$, and a maximum execution budget $B$. The observations collected during sampling are realizations of $X_{p,m,c}=M(Y_{p,m,c})$, as defined in Section 3.1. Algorithm 1 summarizes the procedure.
+
+
+\begin{algorithm} 
+	\caption{Adaptive sampling} 
+	\label{alg:adaptive-sampling} 
+	\begin{algorithmic}[1] 
+		
+		\REQUIRE Prompt $p$, model $m$, configuration $c$, minimum sample size $N_{\min}$, target precision $targetCIwidth$, execution budget $B$ with $B \geq N_{\min}$ 		
+		\ENSURE Sample $S$ and estimate $\hat{\theta}$ 		
+		\STATE Execute $(p,m,c)$ $N_{\min}$ times and collect the corresponding observations of $X_{p,m,c}$ in $S$ 		
+		\STATE $n \gets |S|$ 		
+		\WHILE{$n < B$} 		
+			\STATE Estimate $\theta$ from $S$ and obtain $\hat{\theta}$ 		
+			\STATE Compute a confidence interval $CI(S)$ for $\theta$ 		
+			\IF{$\mathrm{width}(CI(S)) \leq targetCIwidth$} 
+				\STATE \textbf{break} 
+			\ENDIF 		
+			\STATE Execute $(p,m,c)$ once and add the resulting observation of $X_{p,m,c}$ to $S$ 		
+			\STATE $n \gets n + 1$ 		
+		\ENDWHILE 		
+		\RETURN $S$, $\hat{\theta}$ 
+	\end{algorithmic} 
+\end{algorithm}
+
+
+The confidence interval is computed according to the type of metric being estimated. For continuous metrics, SafeLLM4SE uses a standard $t$-based confidence interval when the sampled values can reasonably be assumed to follow an approximately normal distribution~\cite{Efron1993}. When this assumption is not appropriate, SafeLLM4SE uses a bootstrap confidence interval instead~\cite{Efron1993}. This provides a consistent procedure for metrics whose distributions may be skewed or otherwise depart substantially from normality. For binary metrics, such as whether generated code passes the functional tests, SafeLLM4SE uses the Wilson score interval rather than the standard Wald interval~\cite{Wilson1927}, whose coverage can be poor when the estimated proportion is close to 0 or 1.
+
+The target precision $targetCIwidth$ is defined as the maximum total width of the confidence interval for the target property $\theta$. For example, a target width of 0.10 corresponds to a margin of error of $\pm 0.05$. Thus, the required number of executions is determined by the observed variability of $X_{p,m,c}$ rather than by an arbitrary fixed value: stable evaluation conditions may reach the target precision with relatively few executions, whereas highly variable conditions require additional samples. This allows SafeLLM4SE to adapt the number of executions to the observed variability of each evaluation instance while enforcing a predefined precision requirement.
+
+
+
+\subsection{Statistical characterization}
+\label{subsection:SafeLLM4SE:characterization}
+
+
+SafeLLM4SE requires each evaluation to characterize the three dimensions of quality, stability, and estimation uncertainty, while allowing the specific indicators used for quality and stability to be selected according to the evaluation context. Together, these dimensions provide a more complete description of the performance distribution $F_{p,m,c}$ than any single point estimate.
+
+\textbf{Quality} describes the central performance or success rate of the technique under the evaluation conditions. For a target property $\theta$ of $F_{p,m,c}$, SafeLLM4SE recommends reporting the arithmetic mean as the default measure of central tendency. The median is recommended when the distribution is clearly skewed or contains strong outliers. For binary outcomes, such as whether generated code compiles or whether all functional tests pass, quality is characterized by the probability of success, estimated as the proportion of successful executions among all executions. The direction of the metric should also be made explicit (i.e., whether higher or lower values indicate better performance).
+
+\textbf{Stability} Stability describes the variability of $X_{p,m,c}$ across repeated executions under the same evaluation conditions. SafeLLM4SE recommends reporting the standard deviation as the default measure of dispersion. The coefficient of variation may additionally be reported when comparing techniques with different mean performance, provided that the metric has a meaningful ratio scale and a non-zero mean. For highly skewed or heavy-tailed distributions, the interquartile range provides a more robust alternative. Additional distributional descriptors, such as percentiles, may be reported when they provide useful information about the behavior of the system. Stability therefore refers to variability across repeated executions of the same evaluation instance, rather than to differences in performance across benchmark instances.
+
+\textbf{Estimation uncertainty} arises because $F_{p,m,c}$ is inferred from a finite sample of executions. Consequently, the estimated property $\hat{\theta}$ is subject to sampling uncertainty. SafeLLM4SE therefore recommends reporting a confidence interval for all primary performance indicators, using the procedure described in Section~3.2, with a 95\% confidence level by default. This uncertainty should be clearly distinguished from the variability of the LLM: stability describes how much $X_{p,m,c}$ varies across executions, whereas the confidence interval describes the precision with which the target property $\theta$ of $F_{p,m,c}$ has been estimated from the available sample.
+
+
+\subsection{Reporting and visualization}
+\label{subsection:SafeLLM4SE:reporting}
+
+SafeLLM4SE defines the minimum information that an evaluation should report to allow readers to assess the statistical validity, reproducibility, and practical reliability of its results. The reporting requirements cover the three dimensions introduced in Section 3.3—quality, stability, and estimation uncertainty—as well as the experimental protocol used to generate and evaluate the observations.
+
+Table 2 summarizes the SafeLLM4SE Reporting Standard. For each evaluated technique, researchers should report the selected quality and stability indicators and their corresponding estimates. Confidence intervals and the confidence level used to construct them are required for all primary performance indicators.
+
+
+\begin{table*}%[]
+	\vspace*{4pt}
+	\caption{SafeLLM4SE minimum reporting standard for evaluations of LLM-based software engineering techniques.}
+	\label{table:report}
+	%\tablefont
+	\begin{tabular*}{\linewidth}{@{\extracolsep\fill} p{1.8cm} p{7.6cm} p{4.8cm}}
+		\toprule
+		\textbf{Category}                & \textbf{Information to report}                                                                                                            & \textbf{Purpose}                                                        \\
+		\colrule
+		Quality                 & Selected quality indicator(s) and estimated value $\hat{\theta}$.                                 & Characterize the performance of the technique.                  \\
+		Stability               & Selected stability indicator(s), such as standard deviation,   coefficient of variation, or interquartile range.                  & Characterize variability across repeated executions.            \\
+		Estimation \newline uncertainty  & Confidence interval for each primary performance indicator and confidence level.                                                & Quantify the precision of the reported estimates.               \\
+		Sampling                & Number of executions, sampling procedure,   minimum sample size, stopping criterion, and execution budget, if applicable.         & Assess the adequacy and efficiency of the sampling procedure.   \\
+		Model                   & Model name, model version or identifier, and provider.                                                                            & Identify the system being evaluated and facilitate replication. \\
+		Inference \newline configuration & Temperature and other inference parameters that may affect generation.                                                            & Specify the conditions under which outputs were generated.      \\
+		Reproducibility         & Random seed, when supported; exact prompt(s); execution date and time;   and, when applicable, API or model snapshot information. & Account for sources of variation and support reproducibility.   \\
+		Evaluation              & Benchmark or task version, evaluation procedure, test suite or other   evaluation artifacts, and software/tool versions.          & Make the evaluation procedure reproducible.                     \\
+		Resources               & Number of generated tokens or equivalent usage information and, when   available, execution cost.                                 & Quantify the computational and economic resources required.    \\
+		\botrule
+	\end{tabular*} \vspace*{8pt}
+\end{table*}
+
+
+For each estimated quality indicator $\hat{\theta}$, the reported estimate should be accompanied by its confidence interval. Reporting only a point estimate, such as the mean success rate, is therefore insufficient because it does not indicate the precision of the estimate. Likewise, reporting a confidence interval without describing the number of executions and the sampling procedure makes it difficult to assess how the estimate was obtained.
+
+The reporting of model and execution information is particularly important for evaluations using commercial LLM APIs. Model behavior may change over time because of model updates or changes to the serving infrastructure, even when the same model identifier is used. Researchers should therefore report the exact model identifier or version, the execution date and time, and any available snapshot or deployment information. Random seeds should also be reported when the provider exposes them, although a seed should not be assumed to guarantee reproducibility unless the underlying service provides such a guarantee.
+
+Whenever possible, numerical summaries should be complemented with visualizations of the observed values of $X_{p,m,c}$. Boxplots, violin plots, or empirical cumulative distribution functions (ECDFs) can reveal differences in variability, skewness, heavy tails, and other distributional characteristics that may be obscured by summary statistics alone. \textcolor{red}{Section 4 illustrates this reporting approach using HumanEval. Poner un gráfico de ejemplo.}
+
+Collectively, these requirements constitute the SafeLLM4SE Reporting Standard. They provide reviewers and practitioners with the information needed to distinguish the observed performance of an LLM-based software engineering system from its variability and estimation uncertainty, while providing sufficient experimental detail to support meaningful replication and comparison.
+
+
+\subsection{Statistical comparison}
+\label{subsection:SafeLLM4SE:comparsion}
+
+Comparisons between LLM-based software engineering techniques should be performed over the observed values of $X_{p,m,c}$ and the corresponding performance distributions $F_{p,m,c}$, rather than over isolated point estimates. An essential distinction is whether the observations are \emph{independent} or \emph{paired}. Samples are independent when there is no one-to-one correspondence between observations from the two techniques, such as when two techniques are evaluated on different benchmark instances. Samples are paired when both techniques are evaluated under the same experimental conditions, creating a natural correspondence between observations. For example, when two models are evaluated on the same HumanEval problems, the results for each problem form a pair. Preserving this pairing allows the comparison to account for variability attributable to the difficulty of individual benchmark instances.
+
+When a benchmark problem is evaluated multiple times, the repeated executions should be used to estimate the relevant target property $\hat{\theta}_{p,m,c}$ for each technique and benchmark problem, rather than being treated as independent observations in the comparison. For example, if two models generate 164 solutions for each HumanEval problem, SafeLLM4SE first estimates the relevant target property $\hat{\theta}_{p,m,c}$ for each model and benchmark problem and then compares these per-problem estimates across the benchmark. This avoids giving disproportionate weight to problems with more stochastic executions and preserves the natural pairing between techniques evaluated on the same problems.
+
+SafeLLM4SE defines a single minimum statistical procedure for each experimental design, summarized in Table~\ref{table:comparison}. These
+procedures are intended as the default protocol rather than as a collection of interchangeable alternatives. Each comparison must report the estimated difference, its confidence interval, the statistical test and significance level, and the effect size specified in Table~\ref{table:comparison}.
+
+\begin{table*}%[]
+	\vspace*{4pt}
+	\caption{SafeLLM4SE statistical comparison protocol.}
+	\label{table:comparison}
+	%\tablefont
+	\begin{tabular*}{\linewidth}{@{\extracolsep\fill} p{1.8cm} p{3cm} p{4cm} p{4.8cm}}
+		\toprule
+		\textbf{Design} & \textbf{Significance test} & \textbf{Confidence interval} & \textbf{Effect size} \\
+		\colrule
+		Independent &
+		Mann--Whitney U &
+		Bootstrap CI for the difference &
+		Cliff's $\delta$ \\
+		Paired &
+		Wilcoxon signed-rank &
+		Paired bootstrap CI &
+		Matched-pairs rank-biserial correlation \\
+		\botrule
+	\end{tabular*} \vspace*{8pt}
+\end{table*}
+
+For independent samples, SafeLLM4SE specifies the Mann--Whitney U test because it provides a non-parametric comparison of two distributions without requiring normally distributed observations~\cite{Efron1993}. The test is complemented by Cliff's $\delta$, which quantifies the magnitude and direction of stochastic dominance between the two samples and is directly related to the probability that an observation from one technique exceeds an observation from the other \cite{Cliff1993}. A bootstrap confidence interval for the difference between the estimated quality properties, $\hat{\theta}_A-\hat{\theta}_B$, quantifies the uncertainty of the observed performance difference without requiring a parametric distributional assumption.
+
+For paired samples, SafeLLM4SE specifies the Wilcoxon signed-rank test, which operates on the within-pair differences between the per-instance estimates $\hat{\theta}_{p,A,c}$ and $\hat{\theta}_{p,B,c}$, and therefore accounts for the correspondence between observations~\cite{Efron1993}. The matched-pairs rank-biserial correlation is reported as the effect size because it quantifies the balance between favorable and unfavorable signed ranks and provides a directional measure of the magnitude of the paired effect~\cite{Kerby2014}. A
+paired bootstrap confidence interval for $\hat{\theta}_A-\hat{\theta}_B$ is computed by resampling complete pairs, thereby preserving the dependence structure between the two techniques.
+
+The three reported quantities provide complementary information. The statistical test indicates whether the observed data provide evidence of a
+difference, the confidence interval quantifies the precision of the estimated difference, and the effect size describes its magnitude. Statistical
+significance should therefore not be interpreted as evidence of practical importance on its own: with sufficiently large samples, even very small
+differences may become statistically significant.
+
+SafeLLM4SE also recommends reporting the magnitude of non-parametric effect sizes using established interpretation guidelines. For independent samples, Cliff's $\delta$ ranges from $-1$ to $1$, with values close to zero indicating stochastic similarity and values farther from zero indicating stronger differences between the distributions \cite{Cliff1993}. The conventional thresholds are approximately $|\delta|=0.147$, $0.33$, and $0.474$ for small, medium, and large effects, respectively. For paired comparisons, the matched-pairs rank-biserial correlation has the same $[-1,1]$ range and provides an analogous interpretation of effect direction and magnitude ~\cite{Kerby2014}. These thresholds should be regarded as general guidelines rather than universal definitions of practical importance; the substantive relevance of an effect ultimately depends on the task, metric, and application context.
+
+Alternative statistical procedures may be used when the experimental design or structure of the data violates the assumptions underlying this minimum protocol. Such deviations should be explicitly justified and reported. Regardless of the procedure used, a statistical comparison should report the estimated difference $\hat{\theta}_A-\hat{\theta}_B$, its confidence interval, the statistical test and corresponding significance level, and the effect size. Together, these quantities allow readers to assess whether a difference is statistically detectable, how precisely it has been estimated, and whether its magnitude is practically meaningful.
+
+
+
+\subsection{Decision making}
+\label{subsection:SafeLLM4SE:decision-making}
+
+SafeLLM4SE has two complementary objectives: (1) to provide a statistically principled methodology for analysing stochastic LLM-based software engineering systems, and (2) to establish a minimum reporting standard that facilitates reproducibility, comparability, and evidence-based decision making across LLM4SE studies.
+
+The evidence collected through SafeLLM4SE should support, rather than replace, experimental judgement. Let $\theta_A$ and $\theta_B$ denote the target properties of the performance distributions $F_A$ and $F_B$ for two competing techniques, and let $\hat{\theta}_A$ and $\hat{\theta}_B$ be their estimates. A higher observed value $\hat{\theta}_A$ alone is therefore not sufficient to conclude that technique $A$ is superior to technique $B$. Such a conclusion should consider the estimated difference, its uncertainty, the magnitude of the effect, and the stability of the two techniques.
+
+
+A claim that one technique is superior to another should be supported by evidence that considers:
+
+\begin{enumerate}
+	
+\item Quality. The technique achieves higher expected performance, or a higher probability of success for binary outcomes. In terms of the notation introduced in Section~3.1, this corresponds to a higher value of
+the target property $\theta$.
+
+\item Estimation uncertainty. The observed difference between $\hat{\theta}_A$ and $\hat{\theta}_B$ should be interpreted together with its confidence interval. A difference should not be considered conclusive when the available data provide insufficient precision to distinguish the two techniques reliably (i.e., when the confidence interval for the estimated difference is compatible with both a meaningful advantage and no meaningful difference).	
+
+\item Statistical evidence. The observed difference should be supported by the statistical analysis described in Section~3.5, rather	than being plausibly attributable to sampling variation alone.
+
+\item Practical relevance. The estimated effect should be 	sufficiently large to be meaningful for the task and application, rather than being statistically significant but practically negligible.
+
+\item Stability. The variability of $X_{p,m,c}$ should be comparable to or lower than that of the alternative, unless greater
+variability represents an explicit and acceptable trade-off for improved quality.
+	
+\end{enumerate}
+
+These criteria should be considered jointly. A technique may, for example, achieve a higher $\hat{\theta}$ while also exhibiting greater variability or substantial estimation uncertainty. In such cases, declaring a clear overall winner may be inappropriate, and the corresponding trade-offs should be reported explicitly. Similarly, when the estimated difference is small,
+imprecisely estimated, or associated with a negligible effect size, researchers should avoid definitive superiority claims.
+
+
+SafeLLM4SE therefore does not prescribe a universal ranking rule or a single decision criterion. Instead, it provides the statistical evidence needed to distinguish clear improvements from trade-offs and from differences that cannot be reliably established. This supports transparent and evidence-based decisions about which LLM-based software engineering technique is preferable for a given task and application context.
+
+
+\section{CASE STUDY: APPLYING SAFELLM4SE TO HUMANEVAL}
+\label{section:case-study}
+
+This section illustrates the application of SafeLLM4SE to the evaluation and comparison of two LLMs. We consider \texttt{gemini-3.1-flash-lite}, accessed through the Gemini API, and \texttt{qwen2.5-coder:7b}, accessed through Ollama. Both models are evaluated on the 164 problems of HumanEval using a temperature of 2.0. The experiment deliberately uses a relatively high temperature to make stochastic variation visible.
+
+\subsection{Experimental Setup}
+\label{subsection:case-study:setup}
+
+For each problem and model, we apply the adaptive sampling proposed by SafeLLM4SE. We used $N_{\min}=30$, an unlimited execution budget, and required the 95\% Wilson confidence interval for each problem-level success probability to achieve a maximum width of $targetCIwidth = 0.10$ (i.e., a maximum margin of error of $\pm 0.05$). Sampling therefore continues until the estimated success probability for a problem reached the target precision. 
+
+The outcome is binary: $X=1$ when the generated solution passed all HumanEval tests and $X=0$ otherwise. Thus, the target property for quality $\theta$ is the probability of generating a functionally correct solution for a problem $p$, computed as
+
+\begin{equation}
+	\hat{\theta}_{p,m,c}
+	=
+	\frac{1}{N}
+	\sum_{i=1}^{N} X_{p,m,c,i}  .
+\end{equation}
+
+The overall quality of a model is then obtained as the arithmetic mean of the 164 problem-level success probabilities,
+
+\begin{equation}
+	\hat{\theta}_{m,c}
+	=
+	\frac{1}{164}
+	\sum_{p=1}^{164}\hat{\theta}_{p,m,c}.
+\end{equation}
+
+
+The confidence interval for the overall mean success probability is obtained by bootstrapping the 164 problem-level estimates $\hat{\theta}_{p,m,c}$. Each bootstrap sample consists of 164 problems sampled with replacement, and the arithmetic mean of their corresponding estimates is computed. The 95\% confidence interval is given by the corresponding bootstrap percentile interval. This interval quantifies uncertainty in the mean across the benchmark problems and does not represent uncertainty due to sampling additional benchmark problems.
+
+The use of a problem-level target CI is particularly appropriate for this experiment. HumanEval problems differ substantially in difficulty, and therefore the number of executions required to estimate their success probabilities also differs. Easy problems can reach the target precision quickly, whereas problems with success probabilities close to 0.5 generally require more observations. This illustrates the cost-aware sampling principle of SafeLLM4SE without imposing an arbitrary fixed number of executions.
+
+\subsection{SafeLLM4SE Reporting}
+\label{subsection:case-study:reporting}
+
+Table~\ref{table:case-study-reporting} reports the experiment according to the SafeLLM4SE Reporting Standard defined in Table~\ref{table:report}. The results show that Gemini achieves a higher mean success probability $\hat{\theta}_{m}$ (0.742) than Qwen-Coder (0.512). Gemini also exhibits lower within-problem variability than Qwen-Coder, indicating greater stability across repeated executions of the same HumanEval problems.
+
+\begin{table*}%[H]
+	\vspace*{4pt}
+	\caption{HumanEval results reported according to the SafeLLM4SE Reporting Standard.}
+	\label{table:case-study-reporting}
+	\begin{tabular*}{\linewidth}{@{\extracolsep\fill} p{2.0cm} p{5.2cm} p{4.1cm} p{4.1cm}}
+		\toprule
+		\textbf{Category} & \textbf{Information} &
+		\textbf{Gemini} & \textbf{Qwen-Coder} \\
+		\colrule
+		Quality &
+		Mean success probability ($\hat{\theta}_{m}$) &
+		0.742 & 0.512 \\
+		
+		Stability &
+		Mean within-problem standard deviation &
+		0.126 & 0.165 \\
+		
+		Estimation uncertainty &
+		95\% CI for mean success probability &
+		[0.718, 0.765] & [0.483, 0.541] \\
+		
+		Sampling &
+		$N_{\min}$; target CI; budget; median $N$ per problem; total executions &
+		30; width of 95\% CI $\leq 0.1$; $\infty$; 82; 13,874 &
+		30; width of 95\% CI $\leq 0.1$; $\infty$; 91; 15,247 \\
+		
+		Model &
+		Model name, identifier, and provider &
+		Gemini, \texttt{gemini-\discretionary{}{}{}3.1-\discretionary{}{}{}flash-\discretionary{}{}{}lite}; Gemini API &
+		Qwen-Coder, \texttt{qwen2.5-\discretionary{}{}{}co\-der\-:\-7b}; Ollama \\
+		
+		Inference configuration &
+		Temperature &
+		2.0 & 2.0 \\
+		
+		Reproducibility &
+		Execution date; Prompts; API/model information; seed &
+		Sep. 29, 2026; HumanEval prompts (given date); online Gemini API (given date); seed unavailable &
+		Sep. 29, 2026; HumanEval prompts (given date); Ollama v0.33.0; seed unavailable \\
+		
+		Evaluation &
+		Benchmark and evaluation procedure &
+		HumanEval; functional tests &
+		HumanEval; functional tests \\
+		
+		Resources &
+		Number generated tokens and executions &
+		\textcolor{red}{XXXXX}; 13,874 &
+		\textcolor{red}{YYYYY}; 15,247 \\
+		\botrule
+	\end{tabular*}
+	\vspace*{8pt}
+	
+\end{table*}
+
+Figure~\ref{fig:case-study-distribution} visualizes the distribution of the 164 problem-level success probabilities. The distribution provides information that is not captured by the mean alone: Gemini is concentrated at higher success probabilities than Qwen-Coder. The figure describes the distribution of performance across HumanEval problems, whereas stability is assessed from variability across repeated executions within each problem.
+
+\begin{figure*}
+	\centering
+	\includegraphics[width=0.78\linewidth]{fig1.png}
+	\caption{Distribution of problem-level success
+		probabilities obtained with SafeLLM4SE adaptive sampling. Each point
+		represents one HumanEval problem.}
+	\label{fig:case-study-distribution}
+\end{figure*}
+
+\subsection{Statistical Comparison}
+\label{subsection:case-study:comparison}
+
+Because both models are evaluated on the same HumanEval problems, the comparison is paired. For every problem $p$, the experiment provides two estimates, $\hat{\theta}_{p,\mathrm{Gemini}}$ and $\hat{\theta}_{p,\mathrm{Qwen-Coder}}$. The difference for each problem is
+therefore defined as
+
+\begin{equation}
+	D_{p,c} =
+	\hat{\theta}_{p,\mathrm{Gemini},c}
+	-
+	\hat{\theta}_{p,\mathrm{Qwen-Coder},c}.
+\end{equation}
+
+Following the SafeLLM4SE comparison protocol, we apply the Wilcoxon signed-rank test to the 164 paired problem-level estimates. We also
+compute the matched-pairs rank-biserial correlation as the effect size and obtain a paired bootstrap confidence interval for the difference in mean success probability. The results are shown in Table~\ref{table:case-study-comparison}.
+
+\begin{table*}
+	\vspace*{4pt}
+	\caption{SafeLLM4SE comparison of the two models.}
+	\label{table:case-study-comparison}
+	\begin{tabular*}{\linewidth}{@{\extracolsep\fill} p{6.0cm} p{4.0cm}}
+		\toprule
+		\textbf{Comparison} & \textbf{Result} \\
+		\colrule
+		Mean difference (mean of $D_{p,c}$) &
+		$+0.230$ (23.0 pp) \\
+		95\% paired bootstrap CI for $D_{p,c}$ &
+		$[0.186, 0.274]$ \\
+		Wilcoxon signed-rank test &
+		$p < 0.001$ \\
+		Matched-pairs rank-biserial correlation &
+		$0.83$ \\
+		Problems favoring Gemini ($D_{p,c} > 0$) &
+		131 / 164 (79.9\%) \\
+		Problems favoring Qwen-Coder  ($D_{p,c} < 0$)&
+		11 / 164 (6.7\%) \\
+		Ties ($D_{p,c} = 0$) &
+		22 / 164 (13.4\%) \\
+		\botrule
+	\end{tabular*}
+	\vspace*{8pt}
+\end{table*}
+
+
+\subsection{Decision Making}
+
+The results provide consistent evidence in favor of Gemini under the evaluated conditions. Its mean success probability is 23.0 percentage points higher than that of Qwen-Coder, with a 95\% confidence interval for the difference entirely above zero. Gemini also exhibits lower within-problem variability, a large paired effect size, and better performance on most HumanEval problems. Thus, Gemini satisfies the SafeLLM4SE criteria for concluding that it provides superior and more stable performance under the evaluated conditions.
+
+This case study has been entirely undertaken with the SafeLLM4SE application developed, freely available for download~\cite{ref} and included in the official and public PyPi repository of Python software packages under the name of \texttt{safellm4se}.
+
+
+\vspace*{-8pt}
+\section{CONCLUSION}
+\label{section:conclusion}
+
+
+The main lesson from this work is that trustworthy evaluation of LLM-based software engineering systems requires treating their outputs as observations of a stochastic process rather than as deterministic artifacts. A single generation or point estimate can conceal substantial variability and may therefore provide an insufficient basis for engineering decisions. Trustworthy evaluation should instead characterize three complementary dimensions: quality, stability, and estimation uncertainty. This perspective shifts the focus from asking which system produces the highest observed score to asking how reliably that performance can be expected and how precisely it has been estimated.
+
+A second lesson is that statistical rigor and practical evaluation constraints should be considered together. Repeated executions are necessary to characterize stochastic behavior, but fixed sample sizes can either provide insufficient evidence or incur unnecessary cost. Adaptive sampling offers a practical alternative by relating the number of executions to a predefined precision target, allowing evaluation effort to be concentrated where additional observations provide the greatest statistical benefit. Similarly, comparisons should consider uncertainty and effect magnitude, rather than relying on statistical significance or differences in point estimates alone. These principles make the resulting evidence more useful for informed engineering decisions and reduce the risk of drawing strong conclusions from inherently variable systems.
+
+Ultimately, trustworthy AI-enabled software engineering depends not only on the capabilities of the underlying models, but also on the quality and transparency of the evidence used to evaluate them. SafeLLM4SE provides a practical basis for producing such evidence and for making evaluations more reproducible, comparable, and accountable. The software developed in this work, including its source code and the data used in this study, is freely available for download at~\cite{ref}.
+
+
+\vspace*{-8pt}
+\section{ACKNOWLEDGMENTS}
+This work was supported by the Ministry of Science, Innovation and Universities and co-funded by the European Regional Development Fund (ERDF) under project PID2024-155586OB-I00 (MCIU/AEI/10.13039/501100011033). Additional support was provided by the Government of the Principality of Asturias through grant GRU-GIC-24-070.
+
+
+
+
+\def\refname{REFERENCES}
+
+
+\bibliographystyle{IEEEtran}  
+\bibliography{bibliography}
+
+
+\begin{IEEEbiography}{First A. Author}{\,}All biographies are limited to one paragraph, following the structure given here. For features, provide each author's current role and institution (to match the first page of the article); three very brief current research interests; highest degree, topic, and awarding institution (do not include year); professional memberships, such as the IEEE Computer Society and any grade information; and contact information in the form of an email address. For departments, provide each author's current role, institution, and contact information in the form of an email address. Examples are below. \vadjust{\vfill\pagebreak}
+\end{IEEEbiography}
+
+\begin{IEEEbiography}{Second B. Author Jr.}{\,} is a researcher at the  ABC Corporation, B\"oblingen, Germany.  Her current research interests include a, b, and c. Author received her Ph.D. degree  in physics from University. She is a Fellow of the IEEE Computer Society. Contact her at sbauthor@abc.com.\vspace*{8pt}
+\end{IEEEbiography}
+
+\begin{IEEEbiography}{Third C. Author III} {\,} is a program officer at the  DEF Corporation, Tokyo, Japan. Contact him at tcauthor@def.com.
+\end{IEEEbiography}
+
+\end{document}
+
