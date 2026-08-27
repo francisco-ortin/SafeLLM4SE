@@ -8,7 +8,10 @@ from typing import Any
 @dataclass(frozen=True)
 class SamplingObservation:
     """One evaluator measurement."""
+
     theta: float
+    model_name: str = ""
+    model_id: str = ""
     prompt_tokens: int = 0
     completion_tokens: int = 0
     total_tokens: int = 0
@@ -21,7 +24,6 @@ class SamplerSettings:
 
     output_dir: Path
     measurements_path: Path
-    results_path: Path
     reservations_path: Path
     lock_path: Path
     task_id: str
@@ -30,7 +32,6 @@ class SamplerSettings:
     evaluator_name: str
     metric_type: str
     ci_method: str
-    temperature: float
     confidence_level: float
     n_min: int
     target_ci_width: float

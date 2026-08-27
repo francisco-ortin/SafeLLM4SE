@@ -3,6 +3,7 @@
 import importlib
 import inspect
 from abc import ABC, abstractmethod
+from dataclasses import replace
 from typing import Any
 
 from sampling.models import SamplingObservation
@@ -29,6 +30,16 @@ class Evaluator(ABC):
     @abstractmethod
     def metric_type(self) -> str:
         """Return the evaluated variable type: binary or continuous."""
+
+    @property
+    @abstractmethod
+    def model_name(self) -> str:
+        """Return the canonical model name used in persisted measurements."""
+
+    @property
+    @abstractmethod
+    def model_id(self) -> str:
+        """Return the unique model identifier used by the provider."""
 
     @property
     @abstractmethod
@@ -59,8 +70,16 @@ def run_evaluator(
 
     result: SamplingObservation | None = evaluator.run(**context)
     if result is not None:
-        return coerce_observation(result)
-    return observation_from_evaluator(evaluator)
+        observation: SamplingObservation = coerce_observation(result)
+    else:
+        observation = observation_from_evaluator(evaluator)
+    if observation.model_name and observation.model_id:
+        return observation
+    return replace(
+        observation,
+        model_name=observation.model_name or evaluator.model_name,
+        model_id=observation.model_id or evaluator.model_id,
+    )
 
 
 def observation_from_evaluator(evaluator: Evaluator) -> SamplingObservation:
@@ -69,12 +88,10 @@ def observation_from_evaluator(evaluator: Evaluator) -> SamplingObservation:
     prompt_tokens: int = evaluator.prompt_tokens
     completion_tokens: int = evaluator.completion_tokens
     theta: float = float(evaluator.theta)
-    passed: int | None = None
-    if evaluator.metric_type == "binary":
-        passed = int(round(theta))
     return SamplingObservation(
         theta=theta,
-        passed=passed,
+        model_name=evaluator.model_name,
+        model_id=evaluator.model_id,
         prompt_tokens=prompt_tokens,
         completion_tokens=completion_tokens,
         total_tokens=prompt_tokens + completion_tokens,
@@ -88,28 +105,23 @@ def coerce_observation(raw: Any) -> SamplingObservation:
     if isinstance(raw, SamplingObservation):
         return raw
     if isinstance(raw, bool):
-        return SamplingObservation(theta=float(int(raw)), passed=int(raw))
+        return SamplingObservation(theta=float(int(raw)))
     if isinstance(raw, (int, float)):
-        value: float = float(raw)
-        return SamplingObservation(
-            theta=value,
-            passed=int(value) if value in (0.0, 1.0) else None,
-        )
+        return SamplingObservation(theta=float(raw))
     if isinstance(raw, dict):
         value: Any = raw.get(
             "value",
-            raw.get("theta", raw.get("quality", raw.get("passed"))),
+            raw.get("theta", raw.get("quality")),
         )
         if value is None:
             raise ValueError(
-                "Evaluator dictionaries must include value, theta, quality, or passed."
+                "Evaluator dictionaries must include value, theta, or quality."
             )
-        passed: Any = raw.get("passed")
         token_usage: dict[str, Any] = raw.get("token_usage") or {}
         metadata: dict[str, Any] = {
             key: val
             for key, val in raw.items()
-            if key not in {"value", "theta", "quality", "passed", "token_usage"}
+            if key not in {"value", "theta", "quality", "token_usage"}
         }
         numeric_value: float = float(value)
         prompt_tokens: int = int(
@@ -124,7 +136,6 @@ def coerce_observation(raw: Any) -> SamplingObservation:
         )
         return SamplingObservation(
             theta=numeric_value,
-            passed=None if passed is None else int(bool(passed)),
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
             total_tokens=total_tokens,

@@ -10,10 +10,36 @@ from sampling.models import SamplingObservation
 class GeminiQualityEvaluator(BaseEvaluator):
     """Example evaluator that calls Gemini and parses a numeric quality score."""
 
+    def __init__(self, **parameters: Any) -> None:
+        """Initialize the evaluator with a configurable success probability."""
+        super().__init__(**parameters)
+        assert (
+            "temperature" in parameters
+        ), "This model requires temperature parameter as a float"
+        assert isinstance(parameters["temperature"], (int, float)), (
+            "The temperature parameter must be a float or integer"
+        )
+        self.temperature: float = parameters["temperature"]
+        if "model_id" in parameters:
+            self._model_id: str = str(parameters["model_id"])
+        elif "model" in parameters:
+            self._model_id = str(parameters["model"])
+        else:
+            self._model_id: str = "gemini-3.1-flash-lite"
+
+    @property
+    def model_name(self) -> str:
+        """Return the canonical model name used in persisted measurements."""
+        return "gemini"
+
+    @property
+    def model_id(self) -> str:
+        """Return the unique model identifier used by the provider."""
+        return self._model_id
+
     @property
     def metric_type(self) -> str:
         """Return the continuous variable type used by this evaluator."""
-
         return "continuous"
 
     def run(self, **context: Any) -> SamplingObservation | None:
@@ -23,13 +49,11 @@ class GeminiQualityEvaluator(BaseEvaluator):
         from google.genai import types
 
         prompt: str = str(self._parameter("prompt", context.get("prompt", "")))
-        model_name: str = str(
-            self._parameter("model", context.get("model", config.gemini_model))
-        )
+        model_name: str = str(self._parameter("model", self.model_id))
         temperature: float = float(
             self._parameter(
                 "temperature",
-                context.get("temperature", config.temperature),
+                context.get("temperature", self.temperature),
             )
         )
         max_tokens: int = int(
@@ -57,6 +81,8 @@ class GeminiQualityEvaluator(BaseEvaluator):
         self._theta = self._extract_numeric_quality(text)
         return SamplingObservation(
             theta=self._theta,
+            model_name=self.model_name,
+            model_id=self.model_id,
             prompt_tokens=self._prompt_tokens,
             completion_tokens=self._completion_tokens,
             total_tokens=self._prompt_tokens + self._completion_tokens,

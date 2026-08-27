@@ -13,7 +13,6 @@ from sampling.persistence import (
     read_current_values,
     remove_reservation,
     reserve_execution_number,
-    summarize,
 )
 from sampling.statistics import confidence_interval
 
@@ -41,12 +40,18 @@ class AdaptiveSampler:
     def run(self, evaluator: Evaluator) -> dict[str, object]:
         """Run adaptive sampling with the provided evaluator instance."""
 
+        model_name: str = evaluator.model_name
+        model_id: str = evaluator.model_id
         while True:
-            values = read_current_values(self.settings)
+            values = read_current_values(self.settings, model_name, model_id)
             if len(values) >= self.settings.budget or self.should_stop(values):
                 break
 
-            execution_number = reserve_execution_number(self.settings)
+            execution_number = reserve_execution_number(
+                self.settings,
+                model_name,
+                model_id,
+            )
             if execution_number is None:
                 break
             if self.settings.inter_invocation_waiting > 0:
@@ -58,7 +63,6 @@ class AdaptiveSampler:
                         "prompt": self.settings.prompt,
                         "task_id": self.settings.task_id,
                         "model": self.settings.model,
-                        "temperature": self.settings.temperature,
                         "max_tokens": self.settings.max_tokens,
                         "execution_number": execution_number,
                     },
@@ -68,14 +72,23 @@ class AdaptiveSampler:
                     execution_number,
                     observation,
                 )
-                append_measurement_process_safe(self.settings, row)
+                append_measurement_process_safe(
+                    self.settings,
+                    row,
+                    model_name,
+                    model_id,
+                )
             except Exception:
                 with interprocess_file_lock(self.settings.lock_path):
-                    remove_reservation(self.settings, execution_number)
+                    remove_reservation(
+                        self.settings,
+                        execution_number,
+                        model_name,
+                        model_id,
+                    )
                 raise
 
-        summary_rows = summarize(self.settings)
-        values = read_current_values(self.settings)
+        values = read_current_values(self.settings, model_name, model_id)
         ci_low, ci_high, ci_method = confidence_interval(
             values,
             self.settings.metric_type,
@@ -85,8 +98,8 @@ class AdaptiveSampler:
         )
         return {
             "task_id": self.settings.task_id,
-            "model": self.settings.model,
-            "temperature": self.settings.temperature,
+            "model_name": model_name,
+            "model_id": model_id,
             "n": len(values),
             "theta_hat": statistics.fmean(values) if values else math.nan,
             "ci_low": ci_low,
@@ -94,6 +107,4 @@ class AdaptiveSampler:
             "ci_width": ci_high - ci_low,
             "ci_method": ci_method,
             "measurements_path": str(self.settings.measurements_path),
-            "results_path": str(self.settings.results_path),
-            "summary_rows": summary_rows,
         }

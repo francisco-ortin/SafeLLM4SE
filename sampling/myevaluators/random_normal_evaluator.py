@@ -10,6 +10,16 @@ from sampling.models import SamplingObservation
 class RandomNormalEvaluator(BaseEvaluator):
     """Example evaluator that returns real-valued quality scores in [0, 100]."""
 
+    @property
+    def model_name(self) -> str:
+        """Return the canonical model name used in persisted measurements."""
+        return "random-normal"
+
+    @property
+    def model_id(self) -> str:
+        """Return the unique model identifier used by the provider."""
+        return str(self._parameter("model_id", "random-normal-v0"))
+
     def __init__(
         self,
         mean: float = 70.0,
@@ -35,7 +45,11 @@ class RandomNormalEvaluator(BaseEvaluator):
         )
         self._prompt_tokens = random.randint(100, 1000)
         self._completion_tokens = random.randint(100, 1000)
-        return SamplingObservation(theta=self._theta, prompt_tokens=self._prompt_tokens,
-                                   completion_tokens=self._completion_tokens,
-                                   total_tokens=self._completion_tokens+self._prompt_tokens)
-
+        return SamplingObservation(
+            theta=self._theta,
+            model_name=self.model_name,
+            model_id=self.model_id,
+            prompt_tokens=self._prompt_tokens,
+            completion_tokens=self._completion_tokens,
+            total_tokens=self._completion_tokens + self._prompt_tokens,
+        )

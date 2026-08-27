@@ -35,7 +35,7 @@ EVALUATOR_PARAMETERS_HELP: str = (
 
 PARAMETER_HELP: dict[str, str] = {
     "output_dir": (
-        "Directory where measurements, summaries, locks, and reservations are stored."
+        "Directory where measurements, locks, and reservations are stored."
     ),
     "task_id": (
         "Identifier of the evaluation task being sampled. If omitted, the next "
@@ -57,16 +57,22 @@ PARAMETER_HELP: dict[str, str] = {
     "target_ci_width": (
         "Maximum total confidence interval width required to stop sampling."
     ),
-    "budget": "Maximum number of tokens allowed for the task/model/temperature key.",
+    "budget": "Maximum number of evaluator invocations allowed for the task/model key.",
     "bootstrap_samples": (
         "Number of bootstrap resamples used when --ci-method is bootstrap."
     ),
     "max_tokens": "Maximum number of tokens requested from LLM evaluators.",
     "inter_invocation_waiting": (
-        "Seconds to wait before each evaluator invocation in this process."
+        "Optional delay, in seconds, before each evaluator invocation made by this "
+        "process. Use it to throttle providers with rate limits or to avoid sending "
+        "bursts when several sampler processes run at the same time. A value of 0 "
+        "disables the delay."
     ),
     "reservation_ttl_seconds": (
-        "Seconds after which unfinished execution reservations can be reused."
+        "Optional time-to-live, in seconds, for an unfinished execution reservation. "
+        "When a process reserves an execution number and crashes before writing its "
+        "measurement, that reservation can be reused after this many seconds. Increase "
+        "it for slow evaluators; decrease it to recover faster from interrupted runs."
     ),
 }
 
@@ -125,12 +131,16 @@ def build_parser() -> argparse.ArgumentParser:
         parser,
         "inter_invocation_waiting",
         "--inter-invocation-waiting",
+        "--inter_invocation_waiting",
+        metavar="SECONDS",
         type=float,
     )
     _add_argument(
         parser,
         "reservation_ttl_seconds",
         "--reservation-ttl-seconds",
+        "--reservation_ttl_seconds",
+        metavar="SECONDS",
         type=float,
     )
     return parser
@@ -142,7 +152,6 @@ def settings_from_args(args: argparse.Namespace) -> SamplerSettings:
     output_dir: Path = Path(args.output_dir)
     prompt: str = str(_config_value("prompt"))
     model: str = str(_config_value("model"))
-    temperature: float = float(_config_value("temperature"))
     measurements_path: Path = (
         output_dir / _required_config_value("measurements_file_name")
     )
@@ -152,7 +161,6 @@ def settings_from_args(args: argparse.Namespace) -> SamplerSettings:
     return SamplerSettings(
         output_dir=output_dir,
         measurements_path=measurements_path,
-        results_path=output_dir / _required_config_value("results_file_name"),
         reservations_path=output_dir / _required_config_value("reservations_file_name"),
         lock_path=output_dir / _required_config_value("lock_file_name"),
         task_id=task_id,
@@ -161,7 +169,6 @@ def settings_from_args(args: argparse.Namespace) -> SamplerSettings:
         evaluator_name=args.evaluator,
         metric_type=str(_config_value("metric_type")),
         ci_method=args.ci_method,
-        temperature=temperature,
         confidence_level=args.confidence_level,
         n_min=args.n_min,
         target_ci_width=args.target_ci_width,

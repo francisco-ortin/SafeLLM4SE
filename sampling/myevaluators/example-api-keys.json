@@ -1,0 +1,6 @@
+{
+  "llama":  "your API key here",
+  "grok":  "your API key here",
+  "gpt":  "your API key here",
+  "gemini": "your API key here"
+}

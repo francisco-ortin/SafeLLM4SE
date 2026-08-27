@@ -33,6 +33,23 @@ class BaseEvaluator(Evaluator):
         """Return the completion token count from the last evaluator run."""
         return self._completion_tokens
 
+    @property
+    def model_name(self) -> str:
+        """Return the canonical model name used in persisted measurements."""
+
+        return str(self._parameter("model_name", self.__class__.__name__))
+
+    @property
+    def model_id(self) -> str:
+        """Return the provider-specific model identifier used for execution."""
+
+        return str(self._parameter("model_id", self.model_name))
+
+    @property
+    def total_tokens(self) -> int:
+        """Return the total token count from the last evaluator run."""
+        return self._completion_tokens + self._prompt_tokens
+
     def _parameter(self, name: str, default: Any) -> Any:
         """Return a constructor parameter value or the provided default."""
         return self.parameters.get(name, default)
