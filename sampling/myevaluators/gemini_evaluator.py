@@ -6,12 +6,21 @@ from sampling.config import config
 from sampling.myevaluators.base_evaluator import BaseEvaluator
 from sampling.models import SamplingObservation
 
+# Name of the experiment represented by this evaluator.
+EXPERIMENT_NAME: str = "gemini"
+
 
 class GeminiQualityEvaluator(BaseEvaluator):
     """Example evaluator that calls Gemini and parses a numeric quality score."""
 
     def __init__(self, **parameters: Any) -> None:
-        """Initialize the evaluator with a configurable success probability."""
+        """Initialize the evaluator with model and temperature settings.
+        Args:
+            **parameters: Evaluator parameters, including required temperature
+                and optional model or model_id.
+        Raises:
+            AssertionError: If temperature is missing or is not numeric.
+        """
         super().__init__(**parameters)
         assert (
             "temperature" in parameters
@@ -29,22 +38,45 @@ class GeminiQualityEvaluator(BaseEvaluator):
 
     @property
     def model_name(self) -> str:
-        """Return the canonical model name used in persisted measurements."""
+        """Return the canonical model name used in persisted measurements.
+        Returns:
+            The Gemini provider name.
+        """
         return "gemini"
 
     @property
+    def experiment_name(self) -> str:
+        """Return the name of the experiment represented by this evaluator.
+        Returns:
+            The Gemini experiment name.
+        """
+        return EXPERIMENT_NAME
+
+    @property
     def model_id(self) -> str:
-        """Return the unique model identifier used by the provider."""
+        """Return the unique model identifier used by the provider.
+        Returns:
+            The configured Gemini model identifier.
+        """
         return self._model_id
 
     @property
     def metric_type(self) -> str:
-        """Return the continuous variable type used by this evaluator."""
+        """Return the continuous variable type used by this evaluator.
+        Returns:
+            The continuous metric type.
+        """
         return "continuous"
 
     def run(self, **context: Any) -> SamplingObservation | None:
-        """Call Gemini, parse the result, and update evaluator state."""
-
+        """Call Gemini, parse the result, and update evaluator state.
+        Args:
+            **context: Runtime context values that may override prompt,
+                temperature, or max token settings.
+        Returns:
+            A sampling observation containing the parsed quality score, model
+            identifiers, token counts, and provider metadata.
+        """
         from google import genai
         from google.genai import types
 
@@ -81,6 +113,7 @@ class GeminiQualityEvaluator(BaseEvaluator):
         self._theta = self._extract_numeric_quality(text)
         return SamplingObservation(
             theta=self._theta,
+            experiment_name=self.experiment_name,
             model_name=self.model_name,
             model_id=self.model_id,
             prompt_tokens=self._prompt_tokens,

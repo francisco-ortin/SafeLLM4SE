@@ -8,8 +8,10 @@ from pathlib import Path
 
 @contextmanager
 def interprocess_file_lock(lock_path: Path) -> Generator[None, None, None]:
-    """Serialize file updates across independent Python processes."""
-
+    """Serialize file updates across independent Python processes.
+    Args:
+        lock_path: Path to the lock file used for interprocess coordination.
+    """
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     lock_file = lock_path.open("a+b")
     try:

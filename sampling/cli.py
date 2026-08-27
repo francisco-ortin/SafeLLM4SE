@@ -57,11 +57,7 @@ PARAMETER_HELP: dict[str, str] = {
     "target_ci_width": (
         "Maximum total confidence interval width required to stop sampling."
     ),
-    "budget": "Maximum number of evaluator invocations allowed for the task/model key.",
-    "bootstrap_samples": (
-        "Number of bootstrap resamples used when --ci-method is bootstrap."
-    ),
-    "max_tokens": "Maximum number of tokens requested from LLM evaluators.",
+    "budget_tokens": "Maximum total tokens allowed for the task/model key.",
     "inter_invocation_waiting": (
         "Optional delay, in seconds, before each evaluator invocation made by this "
         "process. Use it to throttle providers with rate limits or to avoid sending "
@@ -81,8 +77,12 @@ class MandatoryAwareDefaultsHelpFormatter(argparse.ArgumentDefaultsHelpFormatter
     """Formatter that shows mandatory arguments without reporting a None default."""
 
     def _get_help_string(self, action: argparse.Action) -> str:
-        """Return the help text with mandatory status shown for required arguments."""
-
+        """Return the help text with mandatory status shown for required arguments.
+        Args:
+            action: Parser action whose help text is being formatted.
+        Returns:
+            The formatted help text for the action.
+        """
         help_text: str = action.help or ""
         if action.required:
             return f"{help_text} (mandatory)"
@@ -90,8 +90,10 @@ class MandatoryAwareDefaultsHelpFormatter(argparse.ArgumentDefaultsHelpFormatter
 
 
 def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments for an adaptive sampling run."""
-
+    """Parse command-line arguments for an adaptive sampling run.
+    Returns:
+        The parsed command-line namespace, including evaluator parameters.
+    """
     parser: argparse.ArgumentParser = build_parser()
     args, evaluator_parameter_tokens = parser.parse_known_args()
     args.evaluator_parameters = _parse_evaluator_parameters(
@@ -101,8 +103,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Build the command-line parser used by the adaptive sampler."""
-
+    """Build the command-line parser used by the adaptive sampler.
+    Returns:
+        A configured argument parser for adaptive sampling.
+    """
     parser = argparse.ArgumentParser(
         description="SafeLLM4SE adaptive sampling framework.",
         epilog=EVALUATOR_PARAMETERS_HELP,
@@ -124,9 +128,7 @@ def build_parser() -> argparse.ArgumentParser:
     _add_argument(parser, "confidence_level", "--confidence-level", type=float)
     _add_argument(parser, "n_min", "--n-min", type=int)
     _add_argument(parser, "target_ci_width", "--target-ci-width", type=float)
-    _add_argument(parser, "budget", "--budget", type=int)
-    _add_argument(parser, "bootstrap_samples", "--bootstrap-samples", type=int)
-    _add_argument(parser, "max_tokens", "--max-tokens", type=int)
+    _add_argument(parser, "budget_tokens", "--budget-tokens", type=int)
     _add_argument(
         parser,
         "inter_invocation_waiting",
@@ -147,11 +149,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def settings_from_args(args: argparse.Namespace) -> SamplerSettings:
-    """Create sampler settings from parsed command-line arguments."""
-
+    """Create sampler settings from parsed command-line arguments.
+    Args:
+        args: Parsed command-line arguments.
+    Returns:
+        Runtime settings for the adaptive sampler.
+    """
     output_dir: Path = Path(args.output_dir)
-    prompt: str = str(_config_value("prompt"))
-    model: str = str(_config_value("model"))
     measurements_path: Path = (
         output_dir / _required_config_value("measurements_file_name")
     )
@@ -164,17 +168,11 @@ def settings_from_args(args: argparse.Namespace) -> SamplerSettings:
         reservations_path=output_dir / _required_config_value("reservations_file_name"),
         lock_path=output_dir / _required_config_value("lock_file_name"),
         task_id=task_id,
-        prompt=prompt,
-        model=model,
-        evaluator_name=args.evaluator,
-        metric_type=str(_config_value("metric_type")),
         ci_method=args.ci_method,
         confidence_level=args.confidence_level,
         n_min=args.n_min,
         target_ci_width=args.target_ci_width,
-        budget=args.budget,
-        bootstrap_samples=args.bootstrap_samples,
-        max_tokens=args.max_tokens,
+        budget_tokens=args.budget_tokens,
         inter_invocation_waiting=args.inter_invocation_waiting,
         reservation_ttl_seconds=args.reservation_ttl_seconds,
         run_id=str(uuid4()),
@@ -188,8 +186,13 @@ def _add_argument(
     *flags: str,
     **kwargs: Any,
 ) -> None:
-    """Add a CLI argument using project configuration defaults when present."""
-
+    """Add a CLI argument using project configuration defaults when present.
+    Args:
+        parser: Argument parser to update.
+        config_name: Configuration attribute used for defaults and help text.
+        *flags: Command-line flags passed to argparse.
+        **kwargs: Additional argparse keyword arguments.
+    """
     default: Any = _config_value(config_name)
     kwargs.setdefault("help", PARAMETER_HELP[config_name])
     if default is _MISSING:
@@ -200,14 +203,24 @@ def _add_argument(
 
 
 def _config_value(name: str) -> Any:
-    """Return a configuration value or the missing sentinel when absent."""
-
+    """Return a configuration value or the missing sentinel when absent.
+    Args:
+        name: Configuration attribute name to read.
+    Returns:
+        The configuration value, or the internal missing sentinel.
+    """
     return getattr(config, name, _MISSING)
 
 
 def _required_config_value(name: str) -> Any:
-    """Return a required configuration value or raise a clear error."""
-
+    """Return a required configuration value or raise a clear error.
+    Args:
+        name: Configuration attribute name to read.
+    Returns:
+        The configured value.
+    Raises:
+        AttributeError: If the configuration value is not defined.
+    """
     value: Any = _config_value(name)
     if value is _MISSING:
         raise AttributeError(f"config.{name} is required but is not defined.")
@@ -215,8 +228,12 @@ def _required_config_value(name: str) -> Any:
 
 
 def _next_task_id(measurements_path: Path) -> str:
-    """Return the next generated task identifier based on the measurements CSV."""
-
+    """Return the next generated task identifier based on the measurements CSV.
+    Args:
+        measurements_path: Path to the measurements CSV file.
+    Returns:
+        The next generated task identifier.
+    """
     highest_task_number: int = 0
     task_id_pattern: re.Pattern[str] = re.compile(r"^tasks-id-(\d+)$")
     if not measurements_path.exists() or measurements_path.stat().st_size == 0:
@@ -233,8 +250,14 @@ def _next_task_id(measurements_path: Path) -> str:
 
 
 def _parse_evaluator_parameters(tokens: list[str]) -> dict[str, Any]:
-    """Parse evaluator constructor parameters provided after the CLI separator."""
-
+    """Parse evaluator constructor parameters provided after the CLI separator.
+    Args:
+        tokens: Raw command-line tokens after the sampler arguments.
+    Returns:
+        Evaluator constructor parameters keyed by normalized argument name.
+    Raises:
+        ValueError: If a token is missing name=value syntax or has an empty name.
+    """
     parameters: dict[str, Any] = {}
     for token in tokens:
         if token == "--":
@@ -252,8 +275,12 @@ def _parse_evaluator_parameters(tokens: list[str]) -> dict[str, Any]:
 
 
 def _coerce_parameter_value(raw_value: str) -> Any:
-    """Convert a CLI parameter value to the most suitable Python type."""
-
+    """Convert a CLI parameter value to the most suitable Python type.
+    Args:
+        raw_value: Raw string value from the command line.
+    Returns:
+        A boolean, None, Python literal value, or the original string.
+    """
     normalized_value: str = raw_value.casefold()
     if normalized_value in _BOOLEAN_TEXT_VALUES:
         return _BOOLEAN_TEXT_VALUES[normalized_value]

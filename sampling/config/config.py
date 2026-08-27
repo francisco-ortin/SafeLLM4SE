@@ -17,7 +17,7 @@ class SamplingConfig:
     confidence_level: float = 0.95
     n_min: int = 30
     target_ci_width: float = 0.10
-    budget: int = 10_000
+    budget_tokens: int = 10_000
     bootstrap_samples: int = 2_000
     max_tokens: int = 256
     inter_invocation_waiting: float = 0.0
