@@ -1,4 +1,4 @@
-"""Development notes for future SAFE evaluation examples.
+"""Development notes for future SAFE evaluation myevaluators.
 
 TODO:
 - Build a complete SAFE example with a program that fails frequently.

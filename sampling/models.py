@@ -8,9 +8,7 @@ from typing import Any
 @dataclass(frozen=True)
 class SamplingObservation:
     """One evaluator measurement."""
-
-    value: float
-    passed: int | None = None
+    theta: float
     prompt_tokens: int = 0
     completion_tokens: int = 0
     total_tokens: int = 0
@@ -42,3 +40,4 @@ class SamplerSettings:
     inter_invocation_waiting: float
     reservation_ttl_seconds: float
     run_id: str
+    evaluator_parameters: dict[str, Any] = field(default_factory=dict)

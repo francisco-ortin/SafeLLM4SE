@@ -99,3 +99,354 @@ date,time,task_id,model,temperature,execution_number,passed,prompt_tokens,comple
 2026-08-26,19:08:19,default-task,random-binary,0.2,98,0,0,0,0,0,binary,random_binary,6e7cb1b7-2990-4278-8c50-c2e9890b8771,{}
 2026-08-26,19:08:19,default-task,random-binary,0.2,99,0,0,0,0,0,binary,random_binary,6e7cb1b7-2990-4278-8c50-c2e9890b8771,{}
 2026-08-26,19:08:19,default-task,random-binary,0.2,100,1,0,0,0,1.0,binary,random_binary,6e7cb1b7-2990-4278-8c50-c2e9890b8771,{}
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,1,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,2,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,3,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,4,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,5,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,6,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,7,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,8,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,9,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,10,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,11,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,12,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,13,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,14,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,15,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,16,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,17,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,18,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,19,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,20,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,21,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,22,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,23,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,24,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,25,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,26,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,27,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,28,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,29,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,30,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,31,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,32,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,33,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,34,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,35,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,36,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:29,tasks-id-1,random-binary,0.2,37,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,38,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,39,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,40,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,41,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,42,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,43,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,44,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,45,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,46,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,47,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,48,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,49,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,50,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,51,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,52,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,53,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,54,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,55,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,56,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,57,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,58,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,59,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,60,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,61,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,62,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,63,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,64,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,65,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,66,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,67,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,68,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,69,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,70,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,71,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,72,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,73,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,74,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,75,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,76,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,77,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,78,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,79,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:30,tasks-id-1,random-binary,0.2,80,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,81,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,82,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,83,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,84,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,85,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,86,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,87,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,88,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,89,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,90,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,91,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,92,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,93,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,94,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,95,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,96,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,97,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,98,1,0,0,0,1.0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,99,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:20:31,tasks-id-1,random-binary,0.2,100,0,0,0,0,0,binary,sampling.examples.random_binary_evaluator,3b76b1e6-264f-4996-81ee-36d6b08a16ff,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,1,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,2,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,3,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,4,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,5,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,6,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,7,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,8,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,9,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,10,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,11,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,12,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,13,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,14,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,15,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,16,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,17,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,18,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,19,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,20,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,21,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,22,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,23,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,24,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,25,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,26,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,27,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,28,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,29,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,30,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,31,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,32,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:03,tasks-id-2,random-binary,0.2,33,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,34,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,35,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,36,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,37,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,38,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,39,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,40,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,41,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,42,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,43,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,44,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,45,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,46,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,47,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,48,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,49,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,50,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,51,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,52,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,53,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,54,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,55,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,56,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,57,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,58,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,59,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,60,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,61,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,62,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,63,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,64,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,65,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,66,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,67,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,68,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,69,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,70,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,71,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:04,tasks-id-2,random-binary,0.2,72,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,73,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,74,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,75,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,76,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,77,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,78,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,79,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,80,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,81,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,82,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,83,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,84,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,85,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,86,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,87,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,88,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,89,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,90,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,91,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,92,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,93,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,94,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,95,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:05,tasks-id-2,random-binary,0.2,96,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:06,tasks-id-2,random-binary,0.2,97,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:06,tasks-id-2,random-binary,0.2,98,1,0,0,0,1.0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:06,tasks-id-2,random-binary,0.2,99,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:25:06,tasks-id-2,random-binary,0.2,100,0,0,0,0,0,binary,sampling.myevaluators.random_binary_evaluator,489f0aeb-de69-4aa4-8329-f6834cabd82f,"{""evaluator_type"": ""binary""}"
+2026-08-27,11:38:25,tasks-id-3,random-binary,0.2,1,,483,837,1320,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:25,tasks-id-3,random-binary,0.2,2,,486,303,789,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:25,tasks-id-3,random-binary,0.2,3,,985,510,1495,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:25,tasks-id-3,random-binary,0.2,4,,564,772,1336,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,5,,378,266,644,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,6,,343,360,703,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,7,,329,353,682,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,8,,498,995,1493,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,9,,766,681,1447,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,10,,543,474,1017,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,11,,734,905,1639,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,12,,934,425,1359,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,13,,572,684,1256,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,14,,235,731,966,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,15,,908,732,1640,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,16,,897,942,1839,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,17,,126,691,817,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,18,,460,944,1404,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,19,,804,756,1560,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,20,,991,839,1830,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,21,,127,770,897,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,22,,641,810,1451,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,23,,192,613,805,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,24,,122,254,376,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,25,,213,669,882,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,26,,635,340,975,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,27,,873,270,1143,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,28,,288,480,768,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,29,,658,527,1185,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,30,,354,344,698,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,31,,211,136,347,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,32,,106,731,837,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,33,,681,919,1600,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,34,,485,253,738,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,35,,194,112,306,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,36,,506,966,1472,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,37,,714,330,1044,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,38,,354,641,995,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,39,,368,580,948,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,40,,455,728,1183,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,41,,770,749,1519,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,42,,461,565,1026,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,43,,929,673,1602,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:26,tasks-id-3,random-binary,0.2,44,,496,155,651,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,45,,216,858,1074,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,46,,597,180,777,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,47,,584,832,1416,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,48,,778,241,1019,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,49,,322,980,1302,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,50,,332,492,824,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,51,,134,987,1121,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,52,,947,255,1202,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,53,,414,581,995,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,54,,467,459,926,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,55,,849,255,1104,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,56,,775,778,1553,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,57,,435,220,655,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,58,,112,192,304,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,59,,637,234,871,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,60,,714,974,1688,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,61,,594,575,1169,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,62,,461,611,1072,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,63,,635,107,742,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,64,,535,946,1481,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,65,,411,535,946,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,66,,876,833,1709,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,67,,581,850,1431,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,68,,818,328,1146,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,69,,214,729,943,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,70,,300,704,1004,,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,71,,469,763,1232,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,72,,602,300,902,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:38:27,tasks-id-3,random-binary,0.2,73,,912,804,1716,1.0,binary,sampling.myevaluators.random_binary_evaluator,074e8eaa-f02f-438b-8ce5-70baea8fc7ad,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,1,,465,817,1282,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,2,,581,846,1427,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,3,,132,877,1009,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,4,,955,933,1888,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,5,,939,400,1339,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,6,,225,914,1139,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,7,,245,383,628,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,8,,356,156,512,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,9,,791,149,940,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,10,,999,638,1637,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,11,,593,449,1042,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,12,,925,161,1086,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,13,,961,728,1689,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,14,,889,938,1827,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,15,,504,616,1120,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,16,,410,886,1296,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:34,tasks-id-4,random-binary,0.2,17,,300,748,1048,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,18,,398,996,1394,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,19,,206,300,506,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,20,,331,796,1127,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,21,,904,489,1393,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,22,,902,142,1044,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,23,,960,140,1100,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,24,,923,818,1741,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,25,,445,638,1083,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,26,,283,135,418,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,27,,103,822,925,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,28,,668,657,1325,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,29,,613,355,968,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,30,,345,880,1225,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,31,,552,419,971,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,32,,231,456,687,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,33,,724,658,1382,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,34,,792,225,1017,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,35,,132,335,467,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,36,,934,326,1260,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,37,,285,640,925,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,38,,558,122,680,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,39,,364,879,1243,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,40,,459,207,666,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,41,,502,116,618,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,42,,721,627,1348,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,43,,635,910,1545,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,44,,323,368,691,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,45,,849,461,1310,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,46,,601,792,1393,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,47,,894,637,1531,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:35,tasks-id-4,random-binary,0.2,48,,969,581,1550,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,49,,658,528,1186,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,50,,697,647,1344,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,51,,500,439,939,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,52,,239,185,424,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,53,,725,835,1560,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,54,,111,621,732,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,55,,846,549,1395,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,56,,678,526,1204,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,57,,990,519,1509,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,58,,444,400,844,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,59,,159,879,1038,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,60,,575,158,733,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,61,,456,262,718,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,62,,913,801,1714,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,63,,690,755,1445,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,64,,188,272,460,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,65,,134,832,966,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,66,,301,181,482,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,67,,930,926,1856,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,68,,837,757,1594,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,69,,981,334,1315,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,70,,463,857,1320,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,71,,210,707,917,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,72,,361,210,571,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,73,,917,781,1698,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,74,,582,109,691,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,75,,332,221,553,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,76,,638,973,1611,,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,77,,801,627,1428,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}
+2026-08-27,11:43:36,tasks-id-4,random-binary,0.2,78,,788,965,1753,1.0,binary,sampling.myevaluators.random_binary_evaluator,97de1a8a-daa1-41c9-9e00-9a9d73fd1b2d,{}

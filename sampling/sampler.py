@@ -3,9 +3,8 @@
 import math
 import statistics
 import time
-from collections.abc import Callable
 
-from sampling.evaluators import coerce_observation
+from sampling.evaluators import Evaluator, run_evaluator
 from sampling.locking import interprocess_file_lock
 from sampling.models import SamplerSettings
 from sampling.persistence import (
@@ -39,7 +38,9 @@ class AdaptiveSampler:
         )
         return (ci_high - ci_low) <= self.settings.target_ci_width
 
-    def run(self, evaluator: Callable[..., object]) -> dict[str, object]:
+    def run(self, evaluator: Evaluator) -> dict[str, object]:
+        """Run adaptive sampling with the provided evaluator instance."""
+
         while True:
             values = read_current_values(self.settings)
             if len(values) >= self.settings.budget or self.should_stop(values):
@@ -51,15 +52,17 @@ class AdaptiveSampler:
             if self.settings.inter_invocation_waiting > 0:
                 time.sleep(self.settings.inter_invocation_waiting)
             try:
-                raw = evaluator(
-                    prompt=self.settings.prompt,
-                    task_id=self.settings.task_id,
-                    model=self.settings.model,
-                    temperature=self.settings.temperature,
-                    max_tokens=self.settings.max_tokens,
-                    execution_number=execution_number,
+                observation = run_evaluator(
+                    evaluator,
+                    {
+                        "prompt": self.settings.prompt,
+                        "task_id": self.settings.task_id,
+                        "model": self.settings.model,
+                        "temperature": self.settings.temperature,
+                        "max_tokens": self.settings.max_tokens,
+                        "execution_number": execution_number,
+                    },
                 )
-                observation = coerce_observation(raw)
                 row = create_measurement_row(
                     self.settings,
                     execution_number,

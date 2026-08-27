@@ -155,9 +155,6 @@ def create_measurement_row(
     observation: SamplingObservation,
 ) -> dict[str, Any]:
     timestamp = datetime.now()
-    passed = observation.passed
-    if passed is None and settings.metric_type == "binary":
-        passed = int(round(observation.value))
     return {
         "date": timestamp.strftime("%Y-%m-%d"),
         "time": timestamp.strftime("%H:%M:%S"),
@@ -165,11 +162,10 @@ def create_measurement_row(
         "model": settings.model,
         "temperature": settings.temperature,
         "execution_number": execution_number,
-        "passed": "" if passed is None else passed,
         "prompt_tokens": observation.prompt_tokens,
         "completion_tokens": observation.completion_tokens,
         "total_tokens": observation.total_tokens,
-        "value": observation.value,
+        "value": observation.theta,
         "metric_type": settings.metric_type,
         "evaluator": settings.evaluator_name,
         "run_id": settings.run_id,

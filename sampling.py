@@ -1,6 +1,7 @@
 """Command-line entry point for the generic adaptive sampler."""
 
 import json
+from dataclasses import replace
 
 from sampling.cli import parse_args, settings_from_args
 from sampling.evaluators import load_evaluator
@@ -11,7 +12,11 @@ def main() -> None:
     args = parse_args()
     settings = settings_from_args(args)
     settings.output_dir.mkdir(parents=True, exist_ok=True)
-    evaluator = load_evaluator(settings.evaluator_name)
+    evaluator = load_evaluator(
+        settings.evaluator_name,
+        settings.evaluator_parameters,
+    )
+    settings = replace(settings, metric_type=evaluator.metric_type)
     result = AdaptiveSampler(settings).run(evaluator)
     print(
         json.dumps(
