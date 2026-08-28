@@ -39,7 +39,7 @@ PARAMETER_HELP: dict[str, str] = {
     ),
     "task_id": (
         "Identifier of the evaluation task being sampled. If omitted, the next "
-        "tasks-id-<n> value is computed from the measurements CSV."
+        "task-id-<n> value is computed from the measurements CSV."
     ),
     "evaluator": (
         "Evaluator class to execute, using a module:ClassName reference or a "
@@ -96,6 +96,11 @@ def parse_args() -> argparse.Namespace:
     """
     parser: argparse.ArgumentParser = build_parser()
     args, evaluator_parameter_tokens = parser.parse_known_args()
+    evaluator_parameter_tokens = _promote_known_parameter_tokens(
+        parser,
+        args,
+        evaluator_parameter_tokens,
+    )
     args.evaluator_parameters = _parse_evaluator_parameters(
         evaluator_parameter_tokens,
     )
@@ -235,9 +240,9 @@ def _next_task_id(measurements_path: Path) -> str:
         The next generated task identifier.
     """
     highest_task_number: int = 0
-    task_id_pattern: re.Pattern[str] = re.compile(r"^tasks-id-(\d+)$")
+    task_id_pattern: re.Pattern[str] = re.compile(r"^task-id-(\d+)$")
     if not measurements_path.exists() or measurements_path.stat().st_size == 0:
-        return "tasks-id-1"
+        return "task-id-1"
 
     with measurements_path.open("r", newline="", encoding="utf-8") as csv_file:
         reader: csv.DictReader[str] = csv.DictReader(csv_file)
@@ -246,7 +251,7 @@ def _next_task_id(measurements_path: Path) -> str:
             match: re.Match[str] | None = task_id_pattern.match(task_id)
             if match:
                 highest_task_number = max(highest_task_number, int(match.group(1)))
-    return f"tasks-id-{highest_task_number + 1}"
+    return f"task-id-{highest_task_number + 1}"
 
 
 def _parse_evaluator_parameters(tokens: list[str]) -> dict[str, Any]:
@@ -272,6 +277,120 @@ def _parse_evaluator_parameters(tokens: list[str]) -> dict[str, Any]:
             raise ValueError("Evaluator parameter names cannot be empty.")
         parameters[clean_name] = _coerce_parameter_value(raw_value.strip())
     return parameters
+
+
+def _promote_known_parameter_tokens(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+    tokens: list[str],
+) -> list[str]:
+    """Move known sampler parameters from the evaluator token list into args.
+    Args:
+        parser: Argument parser that defines sampler parameters.
+        args: Parsed namespace to update with recovered sampler parameters.
+        tokens: Tokens not recognized by the first parser pass.
+    Returns:
+        Tokens that still belong to the evaluator constructor.
+    Raises:
+        SystemExit: If a recovered sampler parameter has an invalid value.
+    """
+    actions_by_name: dict[str, argparse.Action] = _known_actions_by_name(parser)
+    evaluator_tokens: list[str] = []
+    token_index: int = 0
+    while token_index < len(tokens):
+        token: str = tokens[token_index]
+        if token == "--":
+            evaluator_tokens.append(token)
+            token_index += 1
+            continue
+        if not token.startswith("--"):
+            evaluator_tokens.append(token)
+            token_index += 1
+            continue
+
+        name_token, separator, raw_value = token.partition("=")
+        clean_name: str = _normalize_parameter_name(name_token)
+        action: argparse.Action | None = actions_by_name.get(clean_name)
+        if action is None:
+            evaluator_tokens.append(token)
+            token_index += 1
+            continue
+
+        if separator:
+            _set_known_argument_value(parser, args, action, raw_value)
+            token_index += 1
+            continue
+
+        next_token_index: int = token_index + 1
+        if next_token_index >= len(tokens):
+            parser.error(f"argument {name_token}: expected one argument")
+        _set_known_argument_value(parser, args, action, tokens[next_token_index])
+        token_index += 2
+
+    return evaluator_tokens
+
+
+def _known_actions_by_name(
+    parser: argparse.ArgumentParser,
+) -> dict[str, argparse.Action]:
+    """Return parser actions keyed by normalized option and destination names.
+    Args:
+        parser: Argument parser that defines sampler parameters.
+    Returns:
+        Mapping from normalized argument names to parser actions.
+    Raises:
+        None.
+    """
+    actions_by_name: dict[str, argparse.Action] = {}
+    for action in parser._actions:
+        if action.dest == argparse.SUPPRESS:
+            continue
+        actions_by_name[_normalize_parameter_name(action.dest)] = action
+        for option_string in action.option_strings:
+            actions_by_name[_normalize_parameter_name(option_string)] = action
+    return actions_by_name
+
+
+def _normalize_parameter_name(name: str) -> str:
+    """Normalize an argument name so hyphen and underscore spellings match.
+    Args:
+        name: Raw argument name, with or without leading dashes.
+    Returns:
+        The normalized argument name.
+    Raises:
+        None.
+    """
+    return name.removeprefix("--").strip().replace("-", "_")
+
+
+def _set_known_argument_value(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+    action: argparse.Action,
+    raw_value: str,
+) -> None:
+    """Convert and set one recovered known sampler argument.
+    Args:
+        parser: Argument parser used to report conversion errors.
+        args: Parsed namespace to update.
+        action: Parser action that owns the recovered argument.
+        raw_value: Raw string value from the command line.
+    Returns:
+        None.
+    Raises:
+        SystemExit: If conversion fails or the value is not allowed.
+    """
+    try:
+        value: Any = action.type(raw_value) if action.type else raw_value
+    except (TypeError, ValueError) as exception:
+        parser.error(f"argument --{action.dest.replace('_', '-')}: {exception}")
+    if action.choices is not None and value not in action.choices:
+        choices: str = ", ".join(str(choice) for choice in action.choices)
+        parser.error(
+            f"argument --{action.dest.replace('_', '-')}: invalid choice: "
+            f"{value!r} (choose from {choices})"
+        )
+    setattr(args, action.dest, value)
 
 
 def _coerce_parameter_value(raw_value: str) -> Any:

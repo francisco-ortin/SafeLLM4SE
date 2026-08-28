@@ -26,24 +26,10 @@ class OllamaRandomEvaluator(BaseEvaluator):
     def __init__(self, **parameters: Any) -> None:
         """Initialize the evaluator with model and temperature settings.
         Args:
-            **parameters: Evaluator parameters, including required temperature
-                and optional model or model_id.
-        Raises:
-            AssertionError: If temperature is missing or is not numeric.
+            **parameters: Evaluator parameters. Defaults are provided if not specified.
         """
         super().__init__(**parameters)
-        assert (
-            "temperature" in parameters
-        ), "This model requires temperature parameter as a float"
-        assert isinstance(parameters["temperature"], (int, float)), (
-            "The temperature parameter must be a float or integer"
-        )
-        self._set_attribute_from_parameter(
-            "temperature",
-            "temperature",
-            parameters["temperature"],
-            float,
-        )
+        self._set_attribute_from_parameter("_temperature", "temperature", config.temperature, float)
         self._set_attribute_from_parameter("_model_id", "model_id", MODEL_ID, str)
         self._set_attribute_from_parameter("_model_name", "model_name", MODEL_NAME, str)
         self._set_attribute_from_parameter("_max_tokens", "max_tokens", MAX_TOKENS, int)
@@ -106,7 +92,7 @@ class OllamaRandomEvaluator(BaseEvaluator):
                 {"role": "user", "content": self._prompt},
             ],
             "options": {
-                "temperature": self.temperature,
+                "temperature": self._temperature,
                 "num_predict": int(self._max_tokens),
             },
             "stream": False,

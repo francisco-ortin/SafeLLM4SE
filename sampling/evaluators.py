@@ -85,6 +85,14 @@ class Evaluator(ABC):
             The completion token count.
         """
 
+    @property
+    def total_tokens(self) -> int:
+        """Return the total token count from the last evaluator run.
+        Returns:
+            The sum of prompt and completion tokens from the last run.
+        """
+        return self.completion_tokens + self.prompt_tokens
+
 
 def load_evaluator(
     reference: str,

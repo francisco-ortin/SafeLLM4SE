@@ -39,41 +39,42 @@ NULL_CSV_VALUE: str = ""
 def row_matches(
     row: dict[str, Any],
     settings: SamplerSettings,
-    model_name: str,
+    experiment_name: str,
     model_id: str,
 ) -> bool:
-    """Return whether a measurement row belongs to the current task and model.
+    """Return whether a measurement row belongs to the current sampling key.
     Args:
         row: Measurement row to inspect.
         settings: Sampler settings containing the target task identifier.
-        model_name: Expected model name.
+        experiment_name: Expected experiment name.
         model_id: Expected model identifier.
     Returns:
-        True if the row belongs to the task and model; otherwise, False.
+        True if the row belongs to the task, experiment, and model id;
+        otherwise, False.
     """
     return (
         str(row.get("task_id")) == settings.task_id
-        and _row_model_name(row) == model_name
-        and _row_model_id(row) in {"", model_id}
+        and str(row.get("experiment_name", "")) == experiment_name
+        and _row_model_id(row) == model_id
     )
 
 
 def read_current_theta(
     settings: SamplerSettings,
-    model_name: str,
+    experiment_name: str,
     model_id: str,
 ) -> list[float]:
-    """Read persisted theta observations for the current task and evaluator model.
+    """Read persisted theta observations for the current sampling key.
     Args:
         settings: Sampler settings containing paths and task identifier.
-        model_name: Model name used to filter rows.
+        experiment_name: Experiment name used to filter rows.
         model_id: Model identifier used to filter rows.
     Returns:
-        Persisted theta observations for the task and model.
+        Persisted theta observations for the task, experiment, and model id.
     """
     theta_values, _ = read_current_theta_and_total_tokens(
         settings,
-        model_name,
+        experiment_name,
         model_id,
     )
     return theta_values
@@ -81,13 +82,13 @@ def read_current_theta(
 
 def read_current_theta_and_total_tokens(
     settings: SamplerSettings,
-    model_name: str,
+    experiment_name: str,
     model_id: str,
 ) -> tuple[list[float], int]:
-    """Read persisted theta observations and consumed tokens for the current model.
+    """Read persisted theta observations and tokens for the current sampling key.
     Args:
         settings: Sampler settings containing paths and task identifier.
-        model_name: Model name used to filter rows.
+        experiment_name: Experiment name used to filter rows.
         model_id: Model identifier used to filter rows.
     Returns:
         A tuple containing theta observations and the summed token count.
@@ -97,7 +98,7 @@ def read_current_theta_and_total_tokens(
     matching_rows: list[dict[str, Any]] = [
         row
         for row in rows
-        if row_matches(row, settings, model_name, model_id)
+        if row_matches(row, settings, experiment_name, model_id)
     ]
     theta_values: list[float] = [
         float(row["theta"])
@@ -128,13 +129,13 @@ def read_measurements(path: Path) -> list[dict[str, Any]]:
 
 def reserve_execution_number(
     settings: SamplerSettings,
-    model_name: str,
+    experiment_name: str,
     model_id: str,
 ) -> int:
     """Reserve the next sample index so parallel processes do not duplicate work.
     Args:
         settings: Sampler settings containing persistence paths and run identity.
-        model_name: Model name used in the reservation key.
+        experiment_name: Experiment name used in the reservation key.
         model_id: Model identifier used in the reservation key.
     Returns:
         The reserved execution number.
@@ -151,23 +152,21 @@ def reserve_execution_number(
         used = {
             int(row["execution_number"])
             for row in measurements
-            if row_matches(row, settings, model_name, model_id)
+            if row_matches(row, settings, experiment_name, model_id)
             and str(row.get("execution_number", "")).isdigit()
         }
         for item in reservations:
             if tuple(item.get("key", [])) == _matching_key(
                 settings,
-                model_name,
+                experiment_name,
                 model_id,
             ):
                 used.add(int(item["execution_number"]))
 
-        execution_number: int = 1
-        while execution_number in used:
-            execution_number += 1
+        execution_number: int = max(used, default=0) + 1
         reservations.append(
             {
-                "key": list(_matching_key(settings, model_name, model_id)),
+                "key": list(_matching_key(settings, experiment_name, model_id)),
                 "execution_number": execution_number,
                 "run_id": settings.run_id,
                 "created_at": now,
@@ -180,14 +179,14 @@ def reserve_execution_number(
 def append_measurement_process_safe(
     settings: SamplerSettings,
     row: dict[str, Any],
-    model_name: str,
+    experiment_name: str,
     model_id: str,
 ) -> None:
     """Append a measurement row while holding the interprocess lock.
     Args:
         settings: Sampler settings containing persistence paths and run identity.
         row: Measurement row to append.
-        model_name: Model name used to remove the matching reservation.
+        experiment_name: Experiment name used to remove the matching reservation.
         model_id: Model identifier used to remove the matching reservation.
     """
     with interprocess_file_lock(settings.lock_path):
@@ -200,7 +199,7 @@ def append_measurement_process_safe(
         remove_reservation(
             settings,
             int(normalized["execution_number"]),
-            model_name,
+            experiment_name,
             model_id,
         )
 
@@ -208,14 +207,14 @@ def append_measurement_process_safe(
 def remove_reservation(
     settings: SamplerSettings,
     execution_number: int,
-    model_name: str,
+    experiment_name: str,
     model_id: str,
 ) -> None:
-    """Remove one execution reservation for the current task and model.
+    """Remove one execution reservation for the current sampling key.
     Args:
         settings: Sampler settings containing reservation path and run identity.
         execution_number: Reserved execution number to remove.
-        model_name: Model name used in the reservation key.
+        experiment_name: Experiment name used in the reservation key.
         model_id: Model identifier used in the reservation key.
     """
     reservations = [
@@ -223,7 +222,7 @@ def remove_reservation(
         for item in _load_reservations(settings.reservations_path)
         if not (
             tuple(item.get("key", []))
-            == _matching_key(settings, model_name, model_id)
+            == _matching_key(settings, experiment_name, model_id)
             and int(item.get("execution_number", -1)) == execution_number
             and item.get("run_id") == settings.run_id
         )
@@ -281,12 +280,12 @@ def _identity(row: dict[str, Any]) -> tuple[str, str, str, str]:
     Args:
         row: Measurement row to identify.
     Returns:
-        A tuple of task identifier, model name, model identifier, and execution
-        number.
+        A tuple of task identifier, experiment name, model identifier, and
+        execution number.
     """
     return (
         str(row.get("task_id", "")),
-        _row_model_name(row),
+        str(row.get("experiment_name", "")),
         _row_model_id(row),
         str(row.get("execution_number", "")),
     )
@@ -300,10 +299,10 @@ def _normalize_measurement(row: dict[str, Any]) -> dict[str, Any]:
         A normalized row with core fields and preserved dynamic parameter fields.
     """
     normalized = {field: row.get(field, "") for field in MEASUREMENT_FIELDS}
-    if not normalized["theta"]:
+    if normalized["theta"] is None or str(normalized["theta"]) == "":
         normalized["theta"] = str(row.get("value", ""))
     if not normalized["model_name"]:
-        normalized["model_name"] = str(normalized.get("model", ""))
+        normalized["model_name"] = _row_model_name(row)
     normalized.update(_legacy_free_parameter_fields(row))
     return normalized
 
@@ -334,18 +333,18 @@ def _write_measurements(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def _matching_key(
     settings: SamplerSettings,
-    model_name: str,
+    experiment_name: str,
     model_id: str,
 ) -> tuple[str, str, str]:
-    """Return the reservation key for one task and model pair.
+    """Return the reservation key for one task, experiment, and model id.
     Args:
         settings: Sampler settings containing the task identifier.
-        model_name: Model name for the reservation.
+        experiment_name: Experiment name for the reservation.
         model_id: Model identifier for the reservation.
     Returns:
         A reservation key tuple.
     """
-    return settings.task_id, model_name, model_id
+    return settings.task_id, experiment_name, model_id
 
 
 def _row_model_name(row: dict[str, Any]) -> str:

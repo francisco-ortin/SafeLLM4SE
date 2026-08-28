@@ -18,9 +18,6 @@ class BaseEvaluator(Evaluator):
             **parameters: Evaluator-specific constructor parameters.
         """
         super().__init__(**parameters)
-        self._theta: float = 0.0
-        self._prompt_tokens: int = 0
-        self._completion_tokens: int = 0
 
     @property
     def theta(self) -> float:
@@ -46,29 +43,6 @@ class BaseEvaluator(Evaluator):
         """
         return self._completion_tokens
 
-    @property
-    def model_name(self) -> str:
-        """Return the canonical model name used in persisted measurements.
-        Returns:
-            The configured model name or the evaluator class name.
-        """
-        return str(self._parameter("model_name", self.__class__.__name__))
-
-    @property
-    def model_id(self) -> str:
-        """Return the provider-specific model identifier used for execution.
-        Returns:
-            The configured model identifier or model name.
-        """
-        return str(self._parameter("model_id", self.model_name))
-
-    @property
-    def total_tokens(self) -> int:
-        """Return the total token count from the last evaluator run.
-        Returns:
-            The sum of prompt and completion tokens from the last run.
-        """
-        return self._completion_tokens + self._prompt_tokens
 
     def _parameter(self, name: str, default: Any) -> Any:
         """Return a constructor parameter value or the provided default.

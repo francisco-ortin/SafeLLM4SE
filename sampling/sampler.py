@@ -71,11 +71,12 @@ class AdaptiveSampler:
         """
         model_name: str = evaluator.model_name
         model_id: str = evaluator.model_id
+        experiment_name: str = evaluator.experiment_name
         metric_type: str = evaluator.metric_type
         while True:
             theta_values, consumed_tokens = read_current_theta_and_total_tokens(
                 self.settings,
-                model_name,
+                experiment_name,
                 model_id,
             )
             if consumed_tokens >= self.settings.budget_tokens or self._should_stop(
@@ -86,7 +87,7 @@ class AdaptiveSampler:
 
             execution_number = reserve_execution_number(
                 self.settings,
-                model_name,
+                experiment_name,
                 model_id,
             )
             if self.settings.inter_invocation_waiting > 0:
@@ -109,7 +110,7 @@ class AdaptiveSampler:
                 append_measurement_process_safe(
                     self.settings,
                     row,
-                    model_name,
+                    experiment_name,
                     model_id,
                 )
             except Exception:
@@ -117,14 +118,14 @@ class AdaptiveSampler:
                     remove_reservation(
                         self.settings,
                         execution_number,
-                        model_name,
+                        experiment_name,
                         model_id,
                     )
                 raise
 
         theta_values, consumed_tokens = read_current_theta_and_total_tokens(
             self.settings,
-            model_name,
+            experiment_name,
             model_id,
         )
         ci_low, ci_high, ci_method = confidence_interval(

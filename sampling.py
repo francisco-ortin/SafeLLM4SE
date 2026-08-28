@@ -11,6 +11,7 @@ from sampling.sampler import AdaptiveSampler
 def main() -> None:
     """Run the adaptive sampler command-line entry point.
     """
+    print("Running SafeLLM4SE sampler...")
     args: argparse.Namespace = parse_args()
     settings: SamplerSettings = settings_from_args(args)
     settings.output_dir.mkdir(parents=True, exist_ok=True)
@@ -20,6 +21,7 @@ def main() -> None:
     )
     result: dict[str, object] = AdaptiveSampler(settings).run(evaluator)
     print(json.dumps(result, indent=2))
+    print(f"Sample written in {settings.measurements_path}.")
 
 
 if __name__ == "__main__":

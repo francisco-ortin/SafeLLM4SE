@@ -6,8 +6,9 @@ from typing import Any
 from sampling.myevaluators.base_evaluator import BaseEvaluator
 from sampling.models import SamplingObservation
 
-# Name of the experiment represented by this evaluator.
 EXPERIMENT_NAME: str = "random-binary"
+MODEL_NAME: str = "random-binary"
+MODEL_ID: str = "random-binary-v0"
 
 
 class RandomBinaryEvaluator(BaseEvaluator):
@@ -19,7 +20,7 @@ class RandomBinaryEvaluator(BaseEvaluator):
         Returns:
             The random binary model name.
         """
-        return "random-binary"
+        return str(self._parameter("model-name", MODEL_NAME))
 
     @property
     def experiment_name(self) -> str:
@@ -27,7 +28,7 @@ class RandomBinaryEvaluator(BaseEvaluator):
         Returns:
             The random binary experiment name.
         """
-        return EXPERIMENT_NAME
+        return str(self._parameter("experiment-name", EXPERIMENT_NAME))
 
     @property
     def model_id(self) -> str:
@@ -35,7 +36,7 @@ class RandomBinaryEvaluator(BaseEvaluator):
         Returns:
             The configured random binary model identifier.
         """
-        return str(self._parameter("model_id", "random-binary-v0"))
+        return str(self._parameter("model_id", MODEL_ID))
 
     def __init__(self, success_probability: float = 0.5, **parameters: Any) -> None:
         """Initialize the evaluator with a configurable success probability.
@@ -47,13 +48,6 @@ class RandomBinaryEvaluator(BaseEvaluator):
         """
         super().__init__(**parameters)
         self.success_probability: float = success_probability
-        assert (
-            "temperature" in parameters
-        ), "This model requires temperature parameter as a float"
-        assert isinstance(parameters["temperature"], (int, float)), (
-            "The temperature parameter must be a float or integer"
-        )
-        self.temperature: float = parameters["temperature"]
 
     @property
     def metric_type(self) -> str:
@@ -73,8 +67,8 @@ class RandomBinaryEvaluator(BaseEvaluator):
         """
         del context
         self._theta = float(random.random() < self.success_probability)
-        self._prompt_tokens = random.randint(100, 1000)
-        self._completion_tokens = random.randint(100, 1000)
+        self._prompt_tokens = random.randint(10, 100)
+        self._completion_tokens = random.randint(10, 100)
         return SamplingObservation(
             theta=self._theta,
             experiment_name=self.experiment_name,
@@ -84,3 +78,4 @@ class RandomBinaryEvaluator(BaseEvaluator):
             completion_tokens=self._completion_tokens,
             total_tokens=self._completion_tokens + self._prompt_tokens,
         )
+

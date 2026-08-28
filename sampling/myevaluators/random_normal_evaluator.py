@@ -6,8 +6,9 @@ from typing import Any
 from sampling.myevaluators.base_evaluator import BaseEvaluator
 from sampling.models import SamplingObservation
 
-# Name of the experiment represented by this evaluator.
 EXPERIMENT_NAME: str = "random-normal"
+MODEL_NAME: str = "random-normal"
+MODEL_ID: str = "random-normal-v0"
 
 
 class RandomNormalEvaluator(BaseEvaluator):
@@ -19,7 +20,7 @@ class RandomNormalEvaluator(BaseEvaluator):
         Returns:
             The random normal model name.
         """
-        return "random-normal"
+        return str(self._parameter("model-name", MODEL_NAME))
 
     @property
     def experiment_name(self) -> str:
@@ -27,7 +28,7 @@ class RandomNormalEvaluator(BaseEvaluator):
         Returns:
             The random normal experiment name.
         """
-        return EXPERIMENT_NAME
+        return str(self._parameter("experiment-name", EXPERIMENT_NAME))
 
     @property
     def model_id(self) -> str:
@@ -35,12 +36,12 @@ class RandomNormalEvaluator(BaseEvaluator):
         Returns:
             The configured random normal model identifier.
         """
-        return str(self._parameter("model_id", "random-normal-v0"))
+        return str(self._parameter("model_id", MODEL_ID))
 
     def __init__(
         self,
-        mean: float = 70.0,
-        standard_deviation: float = 12.0,
+        mean: float = 50.0,
+        standard_deviation: float = 25.0,
         **parameters: Any,
     ) -> None:
         """Initialize the evaluator with normal distribution parameters.
@@ -75,8 +76,8 @@ class RandomNormalEvaluator(BaseEvaluator):
             100.0,
             max(0.0, random.gauss(mu=self.mean, sigma=self.standard_deviation)),
         )
-        self._prompt_tokens = random.randint(100, 1000)
-        self._completion_tokens = random.randint(100, 1000)
+        self._prompt_tokens = random.randint(10, 100)
+        self._completion_tokens = random.randint(10, 100)
         return SamplingObservation(
             theta=self._theta,
             experiment_name=self.experiment_name,
@@ -86,3 +87,4 @@ class RandomNormalEvaluator(BaseEvaluator):
             completion_tokens=self._completion_tokens,
             total_tokens=self._completion_tokens + self._prompt_tokens,
         )
+
