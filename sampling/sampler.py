@@ -33,7 +33,7 @@ class AdaptiveSampler:
             raise ValueError("budget_tokens must be greater than 0.")
         self.settings = settings
 
-    def _should_stop(self, theta_values: list[float], metric_type: str) -> bool:
+    def _ci_reached(self, theta_values: list[float], metric_type: str) -> bool:
         """Return whether adaptive sampling should stop.
         Args:
             theta_values: Theta observations already collected for the current
@@ -44,8 +44,6 @@ class AdaptiveSampler:
             True if the minimum sample size has been reached and the confidence
             interval width is within the target width; otherwise, False.
         """
-        if len(theta_values) < self.settings.n_min:
-            return False
         ci_low, ci_high, _ = confidence_interval(
             theta_values,
             metric_type,
@@ -79,12 +77,9 @@ class AdaptiveSampler:
                 experiment_name,
                 model_id,
             )
-            if consumed_tokens >= self.settings.budget_tokens or self._should_stop(
-                theta_values,
-                metric_type,
-            ):
+            if len(theta_values) >= self.settings.n_min and (consumed_tokens >= self.settings.budget_tokens
+                                                        or self._ci_reached(theta_values, metric_type)):
                 break
-
             execution_number = reserve_execution_number(
                 self.settings,
                 experiment_name,

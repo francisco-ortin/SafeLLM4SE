@@ -29,10 +29,9 @@ MEASUREMENT_FIELDS: list[str] = SAFE_MEASUREMENT_FIELDS + [
     "evaluator",
     "evaluator_parameters",
     "run_id",
-    "metadata",
 ]
 RESERVED_MEASUREMENT_FIELDS: set[str] = set(MEASUREMENT_FIELDS)
-REMOVED_MEASUREMENT_FIELDS: set[str] = {"model", "passed", "value"}
+REMOVED_MEASUREMENT_FIELDS: set[str] = {"metadata", "model", "passed", "value"}
 NULL_CSV_VALUE: str = ""
 
 
@@ -269,7 +268,6 @@ def create_measurement_row(
             default=str,
         ),
         "run_id": settings.run_id,
-        "metadata": json.dumps(observation.metadata, sort_keys=True),
     }
     row.update(_free_parameter_fields(evaluator_parameters))
     return row
