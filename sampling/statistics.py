@@ -33,8 +33,6 @@ def validate_confidence_level(confidence_level: float) -> None:
     """Validate that a confidence level can be used for interval estimation.
     Args:
         confidence_level: Confidence level to validate.
-    Returns:
-        None.
     Raises:
         ValueError: If the confidence level is outside the open interval (0, 1).
     """

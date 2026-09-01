@@ -15,3 +15,10 @@ This project implements SafeLLM2SE Statistical Evaluation and Reporting for LLM-
 - Refactor code to improve readability, maintainability, and performance when necessary.
 - Every function must include a docstring that describes its purpose, parameters, and return value when applicable.
 - Every module must include a docstring that explains its responsibility and expected usage.
+- Do not add the following comment when to the docstring when no exceptions are raised: 
+         Raises:
+            None.
+- Do not add the following comment when to the docstring when nothing is returned: 
+         Returns:
+            None.
+

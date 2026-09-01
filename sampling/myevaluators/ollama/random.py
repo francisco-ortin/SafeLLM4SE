@@ -32,8 +32,6 @@ class OllamaRandomEvaluator(OllamaBaseEvaluator):
         """Initialize the evaluator with model and prompt settings.
         Args:
             **parameters: Evaluator parameters. Defaults are provided if not specified.
-        Returns:
-            None.
         Raises:
             Exception: Re-raises any exception produced by parameter conversion.
         """

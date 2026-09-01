@@ -24,7 +24,7 @@ class SamplingConfig:
     inter_invocation_waiting: float = 0.0  # Delay in seconds between model invocations.
     reservation_ttl_seconds: float = 1 * 60 * 60  # Time in seconds before a reservation expires.
 
-    api_keys_file: str = "myevaluators/api-keys.json"  # Path to the API keys configuration file.
+    api_keys_file: str = "sampling/myevaluators/api-keys.json"  # Path to the API keys configuration file.
     system_prompt: str = (
         "Return only a numeric quality score for the requested output."
     )  # Default system prompt used for scoring requests.

@@ -16,7 +16,8 @@ from sampling.myevaluators.ollama.common import (
     response_completion_tokens,
     response_prompt_tokens,
     response_text,
-    sanitize_completion, DEFAULT_MAX_TOKENS,
+    sanitize_completion,
+    DEFAULT_MAX_TOKENS,
 )
 from sampling.models import SamplingObservation
 
@@ -27,7 +28,7 @@ MAX_TOKENS: int = DEFAULT_MAX_TOKENS  # Maximum number of tokens for each LLM re
 OLLAMA_HOST: str = DEFAULT_OLLAMA_HOST  # Host API for Ollama.
 FIRST_PROBLEM_NUMBER: int = 1  # First one-based HumanEval problem number.
 LAST_PROBLEM_NUMBER: int = HUMANEVAL_PROBLEM_COUNT  # Last HumanEval problem number.
-TEST_TIMEOUT: float =DEFAULT_TEST_TIMEOUT  # Maximum seconds allowed for executing each test.
+TEST_TIMEOUT: float = DEFAULT_TEST_TIMEOUT  # Maximum seconds allowed for each test.
 SYSTEM_PROMPT: str = DEFAULT_SYSTEM_PROMPT  # Generate Python code only.
 
 
@@ -41,8 +42,6 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
         """Initialize the evaluator with model and timeout settings.
         Args:
             **parameters: Evaluator parameters. Defaults are provided if not specified.
-        Returns:
-            None.
         Raises:
             Exception: Re-raises any exception produced by parameter conversion.
         """
@@ -123,7 +122,10 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
         prompt: str = str(dataset_item["prompt"])
         response_data: dict[str, Any] = self.call_ollama(prompt)
         raw_text: str = response_text(response_data)
-        completion: str = prompt + "\n" + "\n" + sanitize_completion(raw_text) + "\n"
+        completion: str = normalize_humaneval_completion(
+            sanitize_completion(raw_text),
+            prompt,
+        )
         evaluation_result: dict[str, Any] = evaluate_sample(
             dataset_item,
             completion,

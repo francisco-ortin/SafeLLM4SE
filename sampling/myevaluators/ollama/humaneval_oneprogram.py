@@ -13,6 +13,7 @@ from sampling.myevaluators.ollama.common import (
     OllamaBaseEvaluator,
     evaluate_sample,
     load_humaneval_problem,
+    normalize_humaneval_completion,
     response_completion_tokens,
     response_prompt_tokens,
     response_text,
@@ -41,8 +42,6 @@ class OllamaHumanEvalOneProgramEvaluator(OllamaBaseEvaluator):
         """Initialize the evaluator with model, task, and timeout settings.
         Args:
             **parameters: Evaluator parameters. Defaults are provided if not specified.
-        Returns:
-            None.
         Raises:
             ValueError: If the configured HumanEval problem number is invalid.
             Exception: Re-raises any exception produced by parameter conversion.
@@ -78,9 +77,13 @@ class OllamaHumanEvalOneProgramEvaluator(OllamaBaseEvaluator):
         """
         del context
         dataset_item: dict[str, Any] = load_humaneval_problem(self._problem_number)
-        response_data: dict[str, Any] = self.call_ollama(str(dataset_item["prompt"]))
+        prompt: str = str(dataset_item["prompt"])
+        response_data: dict[str, Any] = self.call_ollama(prompt)
         raw_text: str = response_text(response_data)
-        completion: str = sanitize_completion(raw_text)
+        completion: str = normalize_humaneval_completion(
+            sanitize_completion(raw_text),
+            prompt,
+        )
         evaluation_result: dict[str, Any] = evaluate_sample(
             dataset_item,
             completion,

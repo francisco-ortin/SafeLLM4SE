@@ -41,8 +41,6 @@ class OllamaBaseEvaluator(BaseEvaluator):
             default_max_tokens: Default maximum number of generated tokens.
             default_system_prompt: Default system prompt used for chat requests.
             **parameters: Evaluator parameters.
-        Returns:
-            None.
         Raises:
             Exception: Re-raises any exception produced by parameter conversion.
         """
@@ -89,8 +87,6 @@ class OllamaBaseEvaluator(BaseEvaluator):
         """Return the canonical model name used in persisted measurements.
         Returns:
             The canonical Ollama-backed model name.
-        Raises:
-            None.
         """
         return self._model_name
 
@@ -99,8 +95,6 @@ class OllamaBaseEvaluator(BaseEvaluator):
         """Return the name of the experiment represented by this evaluator.
         Returns:
             The evaluator experiment name.
-        Raises:
-            None.
         """
         return self.EXPERIMENT_NAME
 
@@ -109,8 +103,6 @@ class OllamaBaseEvaluator(BaseEvaluator):
         """Return the unique model identifier used by the provider.
         Returns:
             The configured Ollama model identifier.
-        Raises:
-            None.
         """
         return self._model_id
 
@@ -119,8 +111,6 @@ class OllamaBaseEvaluator(BaseEvaluator):
         """Return the statistical variable type used by this evaluator.
         Returns:
             The evaluator metric type.
-        Raises:
-            None.
         """
         return self.METRIC_TYPE
 
@@ -157,8 +147,6 @@ class OllamaBaseEvaluator(BaseEvaluator):
             metadata: Observation metadata.
         Returns:
             A sampling observation populated with shared evaluator fields.
-        Raises:
-            None.
         """
         self._theta = theta
         self._prompt_tokens = prompt_tokens
@@ -341,6 +329,9 @@ def normalize_humaneval_completion(completion: str, prompt: str) -> str:
     if not completion:
         return completion
 
+    if _looks_like_complete_python_block(completion):
+        return completion
+
     prompt_lines: list[str] = prompt.splitlines()
     prompt_last_line: str = prompt_lines[-1] if prompt_lines else ""
     prompt_indentation: str = prompt_last_line[
@@ -354,6 +345,33 @@ def normalize_humaneval_completion(completion: str, prompt: str) -> str:
         f"{prompt_indentation}{completion_line}" if completion_line else ""
         for completion_line in completion.splitlines()
     )
+
+
+def _looks_like_complete_python_block(completion: str) -> bool:
+    """Return whether a completion starts as top-level Python code.
+    Args:
+        completion: Python code extracted from the model response.
+    Returns:
+        True when the completion should not be shifted into a function body.
+    """
+    top_level_prefixes: tuple[str, ...] = (
+        "async def ",
+        "class ",
+        "def ",
+        "from ",
+        "import ",
+        "@",
+    )
+    for completion_line in completion.splitlines():
+        stripped_line: str = completion_line.strip()
+        if not stripped_line:
+            continue
+        if stripped_line.startswith("#"):
+            continue
+        return completion_line == stripped_line and stripped_line.startswith(
+            top_level_prefixes
+        )
+    return False
 
 
 def _unsafe_execute(
