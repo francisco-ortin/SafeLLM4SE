@@ -23,8 +23,8 @@ from sampling.myevaluators.ollama.common import (
 )
 from sampling.models import SamplingObservation
 
-MODEL_ID: str = DEFAULT_MODEL_ID  # Unique universal model identifier.
-MODEL_NAME: str = DEFAULT_MODEL_NAME  # Short model name.
+MODEL_ID: str = "deepseek-coder:6.7b" # DEFAULT_MODEL_ID  # Unique universal model identifier.
+MODEL_NAME: str = "deepseek-coder" # DEFAULT_MODEL_NAME  # Short model name.
 EXPERIMENT_NAME: str = "ollama-humaneval-fullbench"  # Evaluator experiment name.
 MAX_TOKENS: int = DEFAULT_MAX_TOKENS  # Maximum number of tokens for each LLM response.
 OLLAMA_HOST: str = DEFAULT_OLLAMA_HOST  # Host API for Ollama.
@@ -151,3 +151,36 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
             "prompt_tokens": response_prompt_tokens(response_data),
             "completion_tokens": response_completion_tokens(response_data),
         }
+
+    @property
+    def model_name(self) -> str:
+        """Return the canonical model name used in persisted measurements.
+        Returns:
+            The canonical Ollama-backed model name.
+        """
+        return MODEL_NAME
+
+    @property
+    def experiment_name(self) -> str:
+        """Return the name of the experiment represented by this evaluator.
+        Returns:
+            The evaluator experiment name.
+        """
+        return EXPERIMENT_NAME
+
+    @property
+    def model_id(self) -> str:
+        """Return the unique model identifier used by the provider.
+        Returns:
+            The configured Ollama model identifier.
+        """
+        return MODEL_ID
+
+    @property
+    def metric_type(self) -> str:
+        """Return the statistical variable type used by this evaluator.
+        Returns:
+            The evaluator metric type.
+        """
+        return "continuous"
+

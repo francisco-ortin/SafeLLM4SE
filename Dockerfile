@@ -12,4 +12,5 @@ RUN pip install --no-cache-dir \
     google-genai \
     datasets \
     loguru \
-    pyarrow
+    pyarrow \
+    matplotlib

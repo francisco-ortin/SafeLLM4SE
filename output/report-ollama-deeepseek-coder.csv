@@ -1,0 +1,2 @@
+date,time,task_id,model_name,model_id,temperature,N,prompt_tokens,completion_tokens,total_tokens,theta_mean,theta_median,theta_min,theta_max,theta_type,sd,cv,iqr,q1,q3,ci_method,ci_confidence-level,ci_low,ci_high,ci_width
+2026-09-02,17:37:16,task-id-56,deepseek-coder,deepseek-coder:6.7b,2.0,30,1002395,609464,1611859,0.6189024390243902,0.6219512195121951,0.5365853658536586,0.6890243902439024,continuous,0.03730543143110404,6.027675620395136,0.03506097560975607,0.6036585365853658,0.6387195121951219,t,95.0,0.6049723619936075,0.632832516055173,0.0278601540615655
