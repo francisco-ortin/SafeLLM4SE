@@ -1,4 +1,4 @@
-"""Default values used by sampling.py when CLI arguments are omitted."""
+"""Default values used by sample.py when CLI arguments are omitted."""
 
 from dataclasses import dataclass
 

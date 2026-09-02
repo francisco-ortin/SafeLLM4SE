@@ -58,7 +58,7 @@ def build_report_row(
     """
     validate_confidence_level(confidence_level)
     theta_values: list[float] = parse_theta_values(rows)
-    theta_type: str = _theta_type(rows, theta_values)
+    theta_type: str = infer_theta_type(rows, theta_values)
     ci_low, ci_high, selected_ci_method = confidence_interval(
         theta_values,
         theta_type,
@@ -72,8 +72,8 @@ def build_report_row(
     standard_deviation: float = (
         statistics.stdev(theta_values) if len(theta_values) > 1 else 0.0
     )
-    prompt_tokens: int = _integer_column_sum(rows, "prompt_tokens")
-    completion_tokens: int = _integer_column_sum(rows, "completion_tokens")
+    prompt_tokens: int = integer_column_sum(rows, "prompt_tokens")
+    completion_tokens: int = integer_column_sum(rows, "completion_tokens")
     timestamp: datetime = datetime.now()
     return {
         "date": timestamp.strftime("%Y-%m-%d"),
@@ -92,7 +92,7 @@ def build_report_row(
         "theta_max": max(theta_values),
         "theta_type": theta_type,
         "sd": standard_deviation,
-        "cv": _coefficient_of_variation(mean_value, standard_deviation),
+        "cv": coefficient_of_variation(mean_value, standard_deviation),
         "iqr": q3_value - q1_value,
         "q1": q1_value,
         "q3": q3_value,
@@ -151,7 +151,7 @@ def parse_theta_values(rows: list[dict[str, str]]) -> list[float]:
     return _numeric_column(rows, "theta")
 
 
-def _theta_type(rows: list[dict[str, str]], theta_values: list[float]) -> str:
+def infer_theta_type(rows: list[dict[str, str]], theta_values: list[float]) -> str:
     """Return the theta metric type for report calculations.
 
     Args:
@@ -164,11 +164,12 @@ def _theta_type(rows: list[dict[str, str]], theta_values: list[float]) -> str:
     Raises:
         ValueError: If metric_type is present with inconsistent or invalid values.
     """
-    metric_types: set[str] = {
-        row.get("metric_type", "").strip().casefold()
-        for row in rows
-        if row.get("metric_type", "").strip()
-    }
+    metric_types: set[str] = set()
+    for row in rows:
+        for fieldname in ("metric_type", "theta_type"):
+            raw_metric_type: str = row.get(fieldname, "").strip()
+            if raw_metric_type:
+                metric_types.add(raw_metric_type.casefold())
     if len(metric_types) > 1:
         formatted_values: str = ", ".join(sorted(metric_types))
         raise ValueError(f"Inconsistent values for 'metric_type': {formatted_values}.")
@@ -214,7 +215,7 @@ def _numeric_column(rows: list[dict[str, str]], fieldname: str) -> list[float]:
     return values
 
 
-def _integer_column_sum(rows: list[dict[str, str]], fieldname: str) -> int:
+def integer_column_sum(rows: list[dict[str, str]], fieldname: str) -> int:
     """Return the sum of parsed integer values from a required CSV column.
 
     Args:
@@ -240,7 +241,7 @@ def _integer_column_sum(rows: list[dict[str, str]], fieldname: str) -> int:
     return total
 
 
-def _coefficient_of_variation(
+def coefficient_of_variation(
     mean_value: float,
     standard_deviation: float,
 ) -> float:

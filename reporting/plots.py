@@ -34,7 +34,8 @@ def generate_requested_plots(
     if not theta_values:
         raise ValueError("theta_values cannot be empty.")
 
-    title: str = f"Theta distribution for {settings.task_id}"
+    task_label: str = settings.task_name or settings.task_id
+    title: str = f"Theta distribution for {task_label}"
     requested_plots: list[tuple[Path | None, PlotFunction]] = [
         (settings.boxplot_path, create_boxplot),
         (settings.violin_path, create_violin_plot),

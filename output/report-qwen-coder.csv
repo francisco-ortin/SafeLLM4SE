@@ -1,0 +1,2 @@
+date,time,task_id,model_name,model_id,temperature,N,prompt_tokens,completion_tokens,total_tokens,theta_mean,theta_median,theta_min,theta_max,theta_type,sd,cv,iqr,q1,q3,ci_method,ci_confidence-level,ci_low,ci_high,ci_width
+2026-09-02,19:09:44,task-id-54,qwen-coder,qwen2.5-coder:7b,2.0,30,842430,336100,1178530,0.8272357723577236,0.8292682926829268,0.7804878048780488,0.8658536585365854,continuous,0.019436705668000667,2.349596852249712,0.018292682926829285,0.8170731707317073,0.8353658536585366,t,95.0,0.8199779871829312,0.834493557532516,0.014515570349584728
