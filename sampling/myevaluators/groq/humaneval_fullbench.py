@@ -1,17 +1,18 @@
-"""Ollama evaluator that generates and tests the complete HumanEval benchmark."""
+"""Groq evaluator that generates and tests the complete HumanEval benchmark."""
 
 import time
 from typing import Any
+
 from loguru import logger
 
-from sampling.myevaluators.ollama.common import (
+from sampling.config import config
+from sampling.myevaluators.groq.common import (
+    DEFAULT_MAX_TOKENS,
     DEFAULT_MODEL_ID,
     DEFAULT_MODEL_NAME,
-    DEFAULT_OLLAMA_HOST,
     DEFAULT_TEST_TIMEOUT,
-    DEFAULT_SYSTEM_PROMPT,
     HUMANEVAL_PROBLEM_COUNT,
-    OllamaBaseEvaluator,
+    GroqBaseEvaluator,
     evaluate_sample,
     load_humaneval_benchmark,
     normalize_humaneval_completion,
@@ -19,26 +20,47 @@ from sampling.myevaluators.ollama.common import (
     response_prompt_tokens,
     response_text,
     sanitize_completion,
-    DEFAULT_MAX_TOKENS,
 )
 from sampling.models import SamplingObservation
 
 MODEL_ID: str = DEFAULT_MODEL_ID  # Unique universal model identifier.
 MODEL_NAME: str = DEFAULT_MODEL_NAME  # Short model name.
-EXPERIMENT_NAME: str = "ollama-humaneval-fullbench"  # Evaluator experiment name.
+EXPERIMENT_NAME: str = "groq-humaneval-fullbench"  # Evaluator experiment name.
 MAX_TOKENS: int = DEFAULT_MAX_TOKENS  # Maximum number of tokens for each LLM response.
-OLLAMA_HOST: str = DEFAULT_OLLAMA_HOST  # Host API for Ollama.
 FIRST_PROBLEM_NUMBER: int = 1  # First one-based HumanEval problem number.
 LAST_PROBLEM_NUMBER: int = HUMANEVAL_PROBLEM_COUNT  # Last HumanEval problem number.
 TEST_TIMEOUT: float = DEFAULT_TEST_TIMEOUT  # Maximum seconds allowed for each test.
-SYSTEM_PROMPT: str = DEFAULT_SYSTEM_PROMPT  # Generate Python code only.
+SYSTEM_PROMPT: str = (
+    "You are a helpful assistant that only writes valid Python code. "
+    "Do not include any other text, explanation, or formatting in your response. "
+    "Never a JSON document or a tool/calling invocation. "
+    "Only valid Python code that solves the problem."
+)
 
 
-class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
-    """Evaluator that tests Ollama-generated Python programs with HumanEval."""
+def _is_groq_quota_or_rate_limit_error(exception: RuntimeError) -> bool:
+    """Return whether a RuntimeError represents a Groq quota or rate-limit error.
+    Args:
+        exception: Runtime error raised by the Groq request wrapper.
+    Returns:
+        True when the error message indicates a recoverable Groq throttling
+        condition; otherwise, False.
+    """
+    message: str = str(exception).casefold()
+    return (
+        "429" in message
+        or "quota" in message
+        or "rate limit" in message
+        or "rate limiting" in message
+        or "too many requests" in message
+    )
 
-    EXPERIMENT_NAME: str = EXPERIMENT_NAME
-    METRIC_TYPE: str = "continuous"
+
+class GroqHumanEvalFullBenchEvaluator(GroqBaseEvaluator):
+    """Evaluator that tests Groq-generated Python programs with HumanEval."""
+
+    EXPERIMENT_NAME: str = EXPERIMENT_NAME  # Experiment represented by the class.
+    METRIC_TYPE: str = "continuous"  # Statistical metric type.
 
     def __init__(self, **parameters: Any) -> None:
         """Initialize the evaluator with model and timeout settings.
@@ -62,18 +84,29 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
     def run(self, **context: Any) -> SamplingObservation | None:
         """Generate all HumanEval solutions, test them, and aggregate pass rate.
         Args:
-            **context: Runtime context values. They are ignored by this evaluator.
+            **context: Runtime context values, including optional waiting times.
         Returns:
             A sampling observation whose theta is the proportion of HumanEval
             programs that passed their tests.
         Raises:
-            RuntimeError: If Ollama returns an HTTP error, cannot be reached, or
-                the HumanEval dataset cannot be loaded.
+            RuntimeError: If a non-quota Groq request fails, HumanEval cannot
+                be loaded, or all problems are skipped by quota errors.
+            FileNotFoundError: If the API key file does not exist.
+            KeyError: If no Groq API key is configured.
+            ValueError: If a waiting time cannot be converted to float.
         """
         inter_invocation_waiting: float = float(
             context.get("inter_invocation_waiting", 0.0) or 0.0
         )
+        reservation_ttl_seconds: float = float(
+            context.get(
+                "reservation_ttl_seconds",
+                config.reservation_ttl_seconds,
+            )
+            or 0.0
+        )
         benchmark_results: list[dict[str, Any]] = []
+        skipped_results: list[dict[str, Any]] = []
         total_prompt_tokens: int = 0
         total_completion_tokens: int = 0
 
@@ -82,16 +115,49 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
             start=FIRST_PROBLEM_NUMBER,
         ):
             logger.debug(f"Evaluating problem {problem_index} in human eval.")
-            result: dict[str, Any] = self._evaluate_problem(
-                problem_index,
-                dataset_item,
-            )
+            try:
+                result: dict[str, Any] = self._evaluate_problem(
+                    problem_index,
+                    dataset_item,
+                )
+            except RuntimeError as exception:
+                if not _is_groq_quota_or_rate_limit_error(exception):
+                    raise
+                skipped_result: dict[str, Any] = {
+                    "task_id": dataset_item["task_id"],
+                    "problem_number": problem_index,
+                    "entry_point": dataset_item["entry_point"],
+                    "reason": str(exception),
+                }
+                skipped_results.append(skipped_result)
+                logger.warning(
+                    "Skipping HumanEval problem {} after Groq quota or "
+                    "rate-limit error. Waiting {} seconds before the next "
+                    "problem.",
+                    problem_index,
+                    reservation_ttl_seconds,
+                )
+                if (
+                    reservation_ttl_seconds > 0
+                    and problem_index < LAST_PROBLEM_NUMBER
+                ):
+                    time.sleep(reservation_ttl_seconds)
+                continue
             if inter_invocation_waiting > 0 and problem_index < LAST_PROBLEM_NUMBER:
-                logger.debug("Waiting {} seconds before the next HumanEval problem.", inter_invocation_waiting)
+                logger.debug(
+                    "Waiting {} seconds before the next HumanEval problem.",
+                    inter_invocation_waiting,
+                )
                 time.sleep(inter_invocation_waiting)
             total_prompt_tokens += int(result.pop("prompt_tokens"))
             total_completion_tokens += int(result.pop("completion_tokens"))
             benchmark_results.append(result)
+
+        if not benchmark_results:
+            raise RuntimeError(
+                "All HumanEval problems were skipped because Groq quota or "
+                "rate-limit errors prevented evaluation."
+            )
 
         passed_programs: int = sum(
             1 for benchmark_result in benchmark_results if benchmark_result["passed"]
@@ -104,11 +170,13 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
             prompt_tokens=total_prompt_tokens,
             completion_tokens=total_completion_tokens,
             metadata={
-                "provider": "ollama",
+                "provider": "groq",
                 "first_problem_number": FIRST_PROBLEM_NUMBER,
                 "last_problem_number": LAST_PROBLEM_NUMBER,
                 "passed_programs": passed_programs,
                 "total_programs": total_programs,
+                "skipped_programs": len(skipped_results),
+                "skipped_results": skipped_results,
                 "results": benchmark_results,
             },
         )
@@ -125,10 +193,12 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
         Returns:
             A benchmark result dictionary with generated code and token counts.
         Raises:
-            RuntimeError: If Ollama returns an HTTP error or cannot be reached.
+            RuntimeError: If the Groq request fails.
+            FileNotFoundError: If the API key file does not exist.
+            KeyError: If no Groq API key is configured.
         """
         prompt: str = str(dataset_item["prompt"])
-        response_data: dict[str, Any] = self.call_ollama(prompt)
+        response_data: dict[str, Any] = self.call_groq(prompt)
         raw_text: str = response_text(response_data)
         completion: str = normalize_humaneval_completion(
             sanitize_completion(raw_text),

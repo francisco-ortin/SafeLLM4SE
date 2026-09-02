@@ -3,6 +3,9 @@
 import math
 import statistics
 import time
+from typing import Any
+
+from loguru import logger
 
 from sampling.config import config
 from sampling.evaluators import Evaluator, run_evaluator
@@ -71,21 +74,54 @@ class AdaptiveSampler:
         model_id: str = evaluator.model_id
         experiment_name: str = evaluator.experiment_name
         metric_type: str = evaluator.metric_type
+        logger.info(
+            "Starting adaptive sampling for task '{}', experiment '{}', model '{}'.",
+            self.settings.task_id,
+            experiment_name,
+            model_id,
+        )
         while True:
+            theta_values: list[float]
+            consumed_tokens: int
             theta_values, consumed_tokens = read_current_theta_and_total_tokens(
                 self.settings,
                 experiment_name,
                 model_id,
             )
-            if len(theta_values) >= self.settings.n_min and (consumed_tokens >= self.settings.budget_tokens
-                                                        or self._ci_reached(theta_values, metric_type)):
+            minimum_sample_size_reached: bool = (
+                len(theta_values) >= self.settings.n_min
+            )
+            token_budget_reached: bool = consumed_tokens >= self.settings.budget_tokens
+            confidence_interval_reached: bool = (
+                minimum_sample_size_reached
+                and self._ci_reached(theta_values, metric_type)
+            )
+            if minimum_sample_size_reached and (
+                token_budget_reached or confidence_interval_reached
+            ):
+                logger.info(
+                    "Stopping adaptive sampling with {} observations and {} tokens.",
+                    len(theta_values),
+                    consumed_tokens,
+                )
                 break
-            execution_number = reserve_execution_number(
+            execution_number: int = reserve_execution_number(
                 self.settings,
                 experiment_name,
                 model_id,
             )
+            logger.info(
+                "Reserved execution {} for task '{}', experiment '{}', model '{}'.",
+                execution_number,
+                self.settings.task_id,
+                experiment_name,
+                model_id,
+            )
             if self.settings.inter_invocation_waiting > 0:
+                logger.debug(
+                    "Waiting {} seconds before evaluator invocation.",
+                    self.settings.inter_invocation_waiting,
+                )
                 time.sleep(self.settings.inter_invocation_waiting)
             try:
                 observation: SamplingObservation = run_evaluator(
@@ -93,9 +129,15 @@ class AdaptiveSampler:
                     {
                         "task_id": self.settings.task_id,
                         "execution_number": execution_number,
+                        "inter_invocation_waiting": (
+                            self.settings.inter_invocation_waiting
+                        ),
+                        "reservation_ttl_seconds": (
+                            self.settings.reservation_ttl_seconds
+                        ),
                     },
                 )
-                row = create_measurement_row(
+                row: dict[str, Any] = create_measurement_row(
                     self.settings,
                     execution_number,
                     observation,
@@ -108,7 +150,17 @@ class AdaptiveSampler:
                     experiment_name,
                     model_id,
                 )
+                logger.info(
+                    "Stored execution {} with theta {} and {} total tokens.",
+                    execution_number,
+                    observation.theta,
+                    observation.total_tokens,
+                )
             except Exception:
+                logger.exception(
+                    "Execution {} failed. Removing its reservation.",
+                    execution_number,
+                )
                 with interprocess_file_lock(self.settings.lock_path):
                     remove_reservation(
                         self.settings,

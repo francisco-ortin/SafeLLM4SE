@@ -9,6 +9,7 @@ from typing import Any
 from uuid import uuid4
 
 from sampling.config import config
+from sampling.config.logger import LOG_LEVELS
 from sampling.models import SamplerSettings
 
 _MISSING = object()
@@ -70,6 +71,11 @@ PARAMETER_HELP: dict[str, str] = {
         "measurement, that reservation can be reused after this many seconds. Increase "
         "it for slow evaluators; decrease it to recover faster from interrupted runs."
     ),
+    "verbose": "Show INFO and higher log messages on screen.",
+    "log_level": (
+        "Show log messages on screen from the selected level. Accepted values: "
+        f"{', '.join(LOG_LEVELS)}."
+    ),
 }
 
 
@@ -117,8 +123,27 @@ def build_parser() -> argparse.ArgumentParser:
         epilog=EVALUATOR_PARAMETERS_HELP,
         formatter_class=MandatoryAwareDefaultsHelpFormatter,
     )
+    parser.add_argument(
+        "--h",
+        action="help",
+        help="Show this help message and exit.",
+    )
     _add_argument(parser, "evaluator", "--evaluator", "--evaluador")
     _add_argument(parser, "output_dir", "--output-dir")
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help=PARAMETER_HELP["verbose"],
+    )
+    parser.add_argument(
+        "--log",
+        dest="log_level",
+        choices=LOG_LEVELS,
+        type=str.upper,
+        metavar="LEVEL",
+        default=None,
+        help=PARAMETER_HELP["log_level"],
+    )
     parser.add_argument(
         "--task-id",
         default=argparse.SUPPRESS,
@@ -338,8 +363,6 @@ def _known_actions_by_name(
         parser: Argument parser that defines sampler parameters.
     Returns:
         Mapping from normalized argument names to parser actions.
-    Raises:
-        None.
     """
     actions_by_name: dict[str, argparse.Action] = {}
     for action in parser._actions:
@@ -357,8 +380,6 @@ def _normalize_parameter_name(name: str) -> str:
         name: Raw argument name, with or without leading dashes.
     Returns:
         The normalized argument name.
-    Raises:
-        None.
     """
     return name.removeprefix("--").strip().replace("-", "_")
 
