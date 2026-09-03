@@ -1,8 +1,8 @@
 # SafeLLM4SE
 
-[![Python](https://img.shields.io/pypi/pyversions/safellm4se)](https://pypi.org/project/safellm4se/)
-[![PyPI](https://img.shields.io/pypi/v/safellm4se)](https://pypi.org/project/safellm4se/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/francisco-ortin/SafeLLM4SE?include_prereleases)](https://github.com/francisco-ortin/SafeLLM4SE/releases)
+[![PyPI](https://img.shields.io/pypi/v/safellm4se)](https://pypi.org/project/safellm4se/)
 
 SafeLLM4SE is a Python toolkit for statistically principled evaluation of
 LLM-based software engineering systems. It treats each LLM execution as a
