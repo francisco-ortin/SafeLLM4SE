@@ -9,7 +9,7 @@ from typing import Any
 from safellm4se.sampling.config import config
 from safellm4se.statistical_utils import validate_bootstrap_samples, validate_confidence_level
 
-from safellm4se.compare.models import ComparisonStatistics, SampleSummary
+from safellm4se.comparing.models import ComparisonStatistics, SampleSummary
 from safellm4se.reporting.metrics import (
     coefficient_of_variation,
     infer_theta_type,

@@ -20,7 +20,7 @@ The project exposes three command-line programs:
 SafeLLM4SE is available on PyPI as `safellm4se`, so you only need to run:
 
 ```bash
-python -m pip install safellm4se
+pip install "SafeLLM4SE[all]"
 ```
 
 If you want to install SafeLLM4SE from its source code, check the [installation details](doc/installation.md).

@@ -3,8 +3,8 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "safellm4se"
-version = "0.1.0"
+name = "SafeLLM4SE"
+version = "0.1.1"
 description = "Statistical evaluation and reporting for LLM-based software engineering systems."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -37,11 +37,11 @@ classifiers = [
 ]
 dependencies = [
     "loguru>=0.7",
+    "matplotlib>=3.8",
+    "scipy>=1.11",
 ]
 
 [project.optional-dependencies]
-plots = ["matplotlib>=3.8"]
-stats = ["scipy>=1.11"]
 datasets = ["datasets>=2.18"]
 gemini = ["google-genai>=1.0"]
 groq = ["groq>=0.9"]
@@ -49,8 +49,6 @@ all = [
     "datasets>=2.18",
     "google-genai>=1.0",
     "groq>=0.9",
-    "matplotlib>=3.8",
-    "scipy>=1.11",
 ]
 
 [project.urls]

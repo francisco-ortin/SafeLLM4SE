@@ -13,7 +13,7 @@ Use Python 3.10 or newer (the code uses modern type-hint syntax such as
 The easiest way to install SafeLLM4SE is to install the package from PyPI:
 
 ```bash
-pip install safellm4se
+pip install "SafeLLM4SE[all]"
 ```
 
 ## Installation from source code
@@ -43,7 +43,7 @@ With this minimal installation you can run:
 - `safellm4se-report` and `safellm4se-compare`.
 
 
-### Ollama
+### [Ollama](https://ollama.com/)
 
 SafeLLM4SE can call [Ollama](https://ollama.com/) models through the local Ollama service.
 You can use the `BaseEvaluator` class in `safellm4se.sampling.myevaluators.ollama` to implement your own evaluator, or you can use the example evaluators provided in the same module.
@@ -60,7 +60,7 @@ ollama pull deepseek-coder:6.7b
 The default host in the code is `http://host.docker.internal:11434`, which is
 convenient from Docker, but you can change it to `http://localhost:11434` if you run the code outside Docker.
 
-### Gemini
+### [Gemini](https://gemini.google.com/)
 
 You have a `BaseEvaluator` class in `safellm4se.sampling.myevaluators.gemini` to implement your own evaluator,
 or you can use the example evaluators provided in the same module.
@@ -99,6 +99,15 @@ Obtain a [Groq](https://groq.com/) API key from [Groq](https://console.groq.com/
 
 Then, pass the path to `api-keys.json` to the evaluator with the `--api_keys_file` parameter.
 
+### [HumanEval](https://humaneval.org/)
+
+[HumanEval](https://humaneval.org/) is a benchmark for evaluating code generation models. 
+We prodive example evaluators that use HumanEval in the `safellm4se.sampling.myevaluators` package.
+To run those example evaluators, you must install the `datasets` package to load the [HumanEval](https://humaneval.org/) benchmark.
+
+```bash
+pip install datasets
+```
 
 
 ## Example evaluator dependencies

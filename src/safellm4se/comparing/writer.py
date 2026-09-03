@@ -4,7 +4,7 @@ import csv
 from pathlib import Path
 from typing import Any
 
-from safellm4se.compare.metrics import COMPARISON_FIELDS
+from safellm4se.comparing.metrics import COMPARISON_FIELDS
 
 
 def write_comparison_report(output_path: Path, report_row: dict[str, Any]) -> None:

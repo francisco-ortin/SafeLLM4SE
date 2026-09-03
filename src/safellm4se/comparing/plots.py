@@ -6,7 +6,7 @@ from typing import Any, Callable
 
 from loguru import logger
 
-from safellm4se.compare.models import ComparisonSettings
+from safellm4se.comparing.models import ComparisonSettings
 from safellm4se.reporting.plots import _pyplot, _save_figure, kde_curve
 
 ComparisonPlotFunction = Callable[

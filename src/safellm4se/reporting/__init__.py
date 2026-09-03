@@ -1,7 +1,7 @@
 """CSV reporting package for SafeLLM4SE sampling and comparison outputs."""
 
-from safellm4se.compare.comparator import generate_comparison_report
-from safellm4se.compare.models import ComparisonSettings
+from safellm4se.comparing.comparator import generate_comparison_report
+from safellm4se.comparing.models import ComparisonSettings
 from safellm4se.reporting.models import ReportingSettings
 from safellm4se.reporting.reporter import generate_report
 

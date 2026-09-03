@@ -6,7 +6,7 @@ from pathlib import Path
 from safellm4se.sampling.config.logger import LOG_LEVELS
 
 from safellm4se.reporting.cli import MandatoryAwareDefaultsHelpFormatter
-from safellm4se.compare.models import ComparisonSettings
+from safellm4se.comparing.models import ComparisonSettings
 
 
 def build_parser() -> argparse.ArgumentParser:

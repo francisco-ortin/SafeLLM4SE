@@ -4,10 +4,10 @@ from typing import Any
 
 from loguru import logger
 
-from safellm4se.compare.metrics import build_comparison_report_row
-from safellm4se.compare.models import ComparisonSettings
-from safellm4se.compare.plots import generate_requested_comparison_plots
-from safellm4se.compare.writer import write_comparison_report
+from safellm4se.comparing.metrics import build_comparison_report_row
+from safellm4se.comparing.models import ComparisonSettings
+from safellm4se.comparing.plots import generate_requested_comparison_plots
+from safellm4se.comparing.writer import write_comparison_report
 from safellm4se.reporting.metrics import parse_theta_values
 from safellm4se.reporting.reader import read_task_rows
 

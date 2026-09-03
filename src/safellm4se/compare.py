@@ -5,9 +5,9 @@ from pathlib import Path
 
 from loguru import logger
 
-from safellm4se.compare.cli import parse_args, settings_from_args
-from safellm4se.compare.comparator import generate_comparison_report
-from safellm4se.compare.models import ComparisonSettings
+from safellm4se.comparing.cli import parse_args, settings_from_args
+from safellm4se.comparing.comparator import generate_comparison_report
+from safellm4se.comparing.models import ComparisonSettings
 from safellm4se.sampling.config.logger import create_log_file_path, setup_logger
 
 
