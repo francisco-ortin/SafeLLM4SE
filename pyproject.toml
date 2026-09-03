@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "safellm4se"
+version = "0.1.0"
+description = "Statistical evaluation and reporting for LLM-based software engineering systems."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Francisco Ortin" },
+]
+keywords = [
+    "llm",
+    "software-engineering",
+    "statistics",
+    "evaluation",
+    "sampling",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "loguru>=0.7",
+]
+
+[project.optional-dependencies]
+plots = ["matplotlib>=3.8"]
+stats = ["scipy>=1.11"]
+datasets = ["datasets>=2.18"]
+gemini = ["google-genai>=1.0"]
+groq = ["groq>=0.9"]
+all = [
+    "datasets>=2.18",
+    "google-genai>=1.0",
+    "groq>=0.9",
+    "matplotlib>=3.8",
+    "scipy>=1.11",
+]
+
+[project.urls]
+Homepage = "https://github.com/francisco-ortin/SafeLLM4SE"
+Documentation = "https://github.com/francisco-ortin/SafeLLM4SE/tree/main/doc"
+Repository = "https://github.com/francisco-ortin/SafeLLM4SE"
+Issues = "https://github.com/francisco-ortin/SafeLLM4SE/issues"
+
+[project.scripts]
+safellm4se-sample = "safellm4se.sample:main"
+safellm4se-report = "safellm4se.report:main"
+safellm4se-compare = "safellm4se.compare:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+safellm4se = ["py.typed"]

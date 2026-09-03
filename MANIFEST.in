@@ -1,0 +1,14 @@
+include LICENSE
+include PUBLISHING.md
+include README.md
+recursive-include doc *.md
+recursive-exclude * __pycache__
+recursive-exclude * *.py[cod]
+recursive-exclude output *
+recursive-exclude logs *
+recursive-exclude .idea *
+exclude paper-v05.tex
+exclude paper-v3.tex
+exclude paper-v3-changes.tex
+exclude sampling/myevaluators/api-keys.json
+exclude src/safellm4se/sampling/myevaluators/api-keys.json
