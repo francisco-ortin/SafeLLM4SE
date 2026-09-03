@@ -6,11 +6,9 @@ ENV PYTHONUNBUFFERED=1 \
 
 # Core ML packages used by the project
 RUN pip install --no-cache-dir \
-    pandas \
-    statsmodels \
     groq \
     google-genai \
     datasets \
     loguru \
-    pyarrow \
-    matplotlib
+    matplotlib \
+    scipy

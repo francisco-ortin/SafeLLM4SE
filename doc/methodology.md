@@ -1,15 +1,17 @@
 # Methodology
 
-SafeLLM4SE is based on the methodology described in `paper-v05.tex`. The core
-idea is that an LLM-based software engineering system should not be evaluated
+SafeLLM4SE is based on the methodology described in the article
+*SafeLLM4SM: Statistical Evaluation and Reporting for LLM-Based Software Engineering Systems*.
+
+The core idea is that an LLM-based software engineering system should not be evaluated
 as if a single output represented deterministic behavior. Each execution is a
 realization of a stochastic process.
 
 For a prompt, model, and configuration, repeated executions produce observed
-metric values. SafeLLM4SE calls each numeric observed value `theta` and estimates
+metric values. SafeLLM4SE calls each numeric observed value $\theta$ (`theta`) and estimates
 the behavior of the underlying process from a sample of repeated observations.
 
-## What SafeLLM4SE Reports
+## What SafeLLM4SE reports
 
 SafeLLM4SE separates three concepts that are often conflated:
 
@@ -22,7 +24,7 @@ SafeLLM4SE separates three concepts that are often conflated:
 The reports also include model/configuration identifiers and token usage so the
 evaluation remains reproducible and cost-aware.
 
-## Adaptive Sampling
+## Adaptive sampling
 
 Instead of choosing a fixed number of executions in advance, SafeLLM4SE samples
 adaptively. A run starts collecting observations and stops only after the
@@ -43,7 +45,7 @@ The main parameters are:
 | `--budget-tokens` | Token budget for the task/experiment/model key. |
 | `--confidence-level` | Confidence level used for interval estimation. |
 
-## Confidence Intervals
+## Confidence intervals
 
 SafeLLM4SE selects confidence interval methods by metric type:
 
@@ -57,7 +59,7 @@ SafeLLM4SE selects confidence interval methods by metric type:
 SciPy improves normality checks and t critical values. Without SciPy, the code
 uses standard-library fallbacks.
 
-## Statistical Comparison
+## Statistical comparison
 
 `safellm4se-compare` implements the SafeLLM4SE comparison protocol for two task samples:
 
@@ -71,13 +73,13 @@ automatic ranking rule. A useful decision should consider the estimated
 difference, its confidence interval, statistical evidence, effect size, and the
 stability of both systems.
 
-## HumanEval Case Study
+## HumanEval case study
 
-The repository includes example HumanEval evaluators for Ollama, Gemini, and
-Groq. The full-benchmark evaluators run all 164 HumanEval problems in each
+The repository includes example [HumanEval](https://humaneval.org/) evaluators for [Ollama](https://ollama.com/), Gemini, and
+Groq. The full-benchmark evaluators run all 164 [HumanEval](https://humaneval.org/) problems in each
 sampling observation and report `theta` as the proportion of problems solved in
 that complete execution.
 
 The current `output/` directory contains example reports and plots comparing
-`qwen2.5-coder:7b` and `deepseek-coder:6.7b` through Ollama-backed HumanEval
+`qwen2.5-coder:7b` and `deepseek-coder:6.7b` through Ollama-backed [HumanEval](https://humaneval.org/)
 runs.

@@ -1,6 +1,8 @@
 # CLI Reference
 
-This reference reflects the current Python parsers in
+
+This reference shows the arguments and options for the three command-line tools in SafeLLM4SE.
+That is, it reflects the current Python parsers in
 `src/safellm4se/sampling/cli.py`, `src/safellm4se/reporting/cli.py`, and
 `src/safellm4se/compare/cli.py`.
 
@@ -32,9 +34,9 @@ Options:
 
 Evaluator parameters:
 
-- Put evaluator-specific arguments after the separator `--`.
+- Put evaluator-specific arguments after the separator `--`. Any parameter name can be passed. The evaluator developer can use it during object initialization (in `__init__`).
 - Use `name=value` or `--name=value`.
-- Hyphens are normalized to underscores.
+- Hyphens are normalized to underscores. Both syntax forms are accepted.
 - Values are parsed with Python literal syntax when possible.
 
 Examples:
@@ -77,7 +79,7 @@ Non-reserved evaluator parameters are also written as extra CSV columns.
 
 ## `safellm4se-report`
 
-Purpose: summarize all measurements for one `task_id`.
+Purpose: summarize all measurements for the sample identified by `task_id` and generate optional visualizations.
 
 ```bash
 safellm4se-report --input output/measurements.csv --task-id TASK_ID [options]
@@ -102,7 +104,7 @@ Options:
 | `--log LEVEL` | Disabled | Print logs from `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. |
 | `--h` | | Show help. |
 
-Output columns:
+Output columns stored in the output CSV report:
 
 | Column | Meaning |
 |---|---|
@@ -122,10 +124,12 @@ Output columns:
 
 ## `safellm4se-compare`
 
-Purpose: compare two task samples from the same `measurements.csv`.
+Purpose: compare two samples identified by `task_id-1` and `task_id-2` in the same
+CSV input file. The comparison can be either *paired* or *independent*.
+It also generates optional visualizations comparing the two samples.
 
 ```bash
-safellm4se-comparing --input output/measurements.csv --task-id-1 TASK_A --task-id-2 TASK_B --test-type independent
+safellm4se-compare --input output/measurements.csv --task-id-1 TASK_A --task-id-2 TASK_B --test-type independent
 ```
 
 Options:
@@ -149,7 +153,7 @@ Options:
 | `--log LEVEL` | Disabled | Print logs from `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. |
 | `--h` | | Show help. |
 
-Comparison protocol:
+Comparison protocol (how statistics are computed) depends on the design type:
 
 | Design | Test | CI | Effect size |
 |---|---|---|---|
@@ -173,3 +177,6 @@ The estimated difference is computed as:
 ```text
 theta_mean_1 - theta_mean_2
 ```
+
+Optional visualizations are generated with the same names as in `safellm4se-report`,
+but they show both samples side by side.

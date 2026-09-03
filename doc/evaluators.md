@@ -1,10 +1,15 @@
 # Evaluator Guide
 
-`safellm4se-sample` is evaluator-agnostic. An evaluator is a Python class that
+`safellm4se-sample` is evaluator-agnostic, so it can be used with any user-provided evaluator, as long as it implements the `Evaluator` contract.
+An evaluator is a Python class that
 implements the `safellm4se.sampling.evaluators.Evaluator` contract and returns
 one numeric observation at a time.
 
-## Loading Evaluators
+We provide example evaluators for local random sampling and the [Ollama](https://www.ollama.com), [Gemini](https://gemini.google.com), and [Groq](https://groq.com/) APIs.
+For these API providers, we provide default evaluators to help you get started with the evaluation of
+LLMs served by these platforms. You can also implement your own evaluator for any other LLM provider or evaluation process.
+
+## Loading evaluators
 
 The `--evaluator` argument accepts:
 
@@ -18,7 +23,7 @@ safellm4se-sample --evaluator safellm4se.sampling.myevaluators.random_binary_eva
 safellm4se-sample --evaluator safellm4se.sampling.myevaluators.random_binary_evaluator:RandomBinaryEvaluator
 ```
 
-## Evaluator Contract
+## Evaluator contract
 
 An evaluator must expose:
 
@@ -44,7 +49,7 @@ An evaluator must expose:
 If `run` returns `None`, the sampler reads the public properties from the
 evaluator instance.
 
-## Minimal Custom Evaluator
+## Minimal custom evaluator
 
 ```python
 """Example evaluator used by SafeLLM4SE documentation."""
@@ -149,16 +154,16 @@ Run it with:
 safellm4se-sample --evaluator path.to.module:ConstantEvaluator -- value=0.75
 ```
 
-## Included Evaluators
+## Included evaluators
 
-### Local Random Evaluators
+### Local random evaluators
 
 | Module | Class | Metric | Main parameters |
 |---|---|---|---|
 | `safellm4se.sampling.myevaluators.random_binary_evaluator` | `RandomBinaryEvaluator` | `binary` | `success_probability`, `model_id` |
 | `safellm4se.sampling.myevaluators.random_normal_evaluator` | `RandomNormalEvaluator` | `continuous` | `mean`, `standard_deviation`, `model_id` |
 
-### Ollama Evaluators
+### [Ollama](https://ollama.com/) evaluators
 
 | Module | Class | Metric | Main parameters |
 |---|---|---|---|
@@ -168,12 +173,12 @@ safellm4se-sample --evaluator path.to.module:ConstantEvaluator -- value=0.75
 
 Notes:
 
-- Ollama requests are sent to `/api/chat`.
+- [Ollama](https://ollama.com/) requests are sent to `/api/chat`.
 - The default host is `http://host.docker.internal:11434`.
 - `humaneval_fullbench` currently fixes `model_name` to `deepseek-coder` and
   `model_id` to `deepseek-coder:6.7b` through properties in that module.
 
-### Gemini Evaluators
+### [Gemini](https://gemini.google.com/) evaluators
 
 | Module | Class | Metric | Main parameters |
 |---|---|---|---|
@@ -183,7 +188,7 @@ Notes:
 
 Default model identifier: `gemini-3.1-flash-lite`.
 
-### Groq Evaluators
+### [Groq](https://groq.com/) evaluators
 
 | Module | Class | Metric | Main parameters |
 |---|---|---|---|
@@ -193,13 +198,13 @@ Default model identifier: `gemini-3.1-flash-lite`.
 
 Default model identifier: `openai/gpt-oss-20b`.
 
-## HumanEval Evaluation
+## HumanEval evaluation
 
-The HumanEval evaluators load `openai/openai_humaneval` through the `datasets`
+The [HumanEval](https://humaneval.org/) evaluators load `openai/openai_humaneval` through the `datasets`
 package. They ask a model to complete Python functions and execute the generated
 code against the benchmark tests in a separate process with a timeout.
 
-HumanEval modes:
+[HumanEval](https://humaneval.org/) modes:
 
 - `humaneval_oneprogram`: evaluates one HumanEval problem and returns a binary
   pass/fail `theta`.

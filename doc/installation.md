@@ -1,65 +1,107 @@
 # Installation
 
 This document lists the minimum runtime packages and the optional packages used
-by the example evaluators in `safellm4se.sampling.myevaluators`.
+by SafeLLM4SE and the example evaluators in `safellm4se.sampling.myevaluators`.
 
-## Python Version
+## Python version
 
-Use Python 3.10 or newer. The code uses modern type-hint syntax such as
-`Path | None`.
+Use Python 3.10 or newer (the code uses modern type-hint syntax such as
+`Path | None`).
 
-## Minimal Installation
+## Easiest installation
 
-The framework core uses the Python standard library for CSV persistence,
-adaptive sampling, confidence intervals, and file locking. The package installs
-`loguru` automatically for execution logging.
+The easiest way to install SafeLLM4SE is to install the package from PyPI:
 
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
-python -m pip install --upgrade pip
-python -m pip install safellm4se
+pip install safellm4se
+```
+
+## Installation from source code
+
+To install SafeLLM4SE from its source code, clone the repository and run:
+
+```bash
+git clone https://github.com/francisco-ortin/SafeLLM4SE.git
+cd SafeLLM4SE
+```
+
+The framework core uses the Python standard library for CSV persistence,
+adaptive sampling, confidence intervals, and file locking.
+It also uses the following packages:
+- `loguru` for logging.
+- `scipy` for statistical calculations.
+- `matplotlib` if you want to generate plots.
+
+```bash
+pip install loguru scipy matplotlib
 ```
 
 With this minimal installation you can run:
 
 - `safellm4se-sample` with custom evaluators that do not need extra libraries.
 - `safellm4se-sample` with the random example evaluators.
-- `safellm4se-report` and `safellm4se-compare` without plots.
+- `safellm4se-report` and `safellm4se-compare`.
 
-## Recommended Statistical Extras
 
-SafeLLM4SE works without SciPy, but `scipy` improves several calculations:
+### Ollama
 
-- Student t critical values.
-- Shapiro-Wilk and Anderson-Darling normality checks.
-- Mann-Whitney U and Wilcoxon exact/library implementations.
-- Gaussian KDE when generating KDE-based plots.
+SafeLLM4SE can call [Ollama](https://ollama.com/) models through the local Ollama service.
+You can use the `BaseEvaluator` class in `safellm4se.sampling.myevaluators.ollama` to implement your own evaluator, or you can use the example evaluators provided in the same module.
+These services do not require any extra Python package, but you need to install the [Ollama](https://ollama.com/)
+service and pull the models you want to use.
 
-```bash
-python -m pip install "safellm4se[stats]"
-```
-
-When SciPy is not available, SafeLLM4SE uses standard-library fallbacks for the
-normal quantile, t-like intervals, non-parametric test approximations, and KDE.
-
-## Plotting
-
-Install Matplotlib only if you want SVG plots from `safellm4se-report` or `safellm4se-compare`:
+Once installed, pull the models used by the evaluator:
 
 ```bash
-python -m pip install "safellm4se[plots]"
+ollama pull qwen2.5-coder:7b
+ollama pull deepseek-coder:6.7b
 ```
 
-Plot options that need Matplotlib:
+The default host in the code is `http://host.docker.internal:11434`, which is
+convenient from Docker, but you can change it to `http://localhost:11434` if you run the code outside Docker.
 
-- `--boxplot`
-- `--violin`
-- `--ecdf`
-- `--raincloud`
-- `--kde`
+### Gemini
 
-## Example Evaluator Dependencies
+You have a `BaseEvaluator` class in `safellm4se.sampling.myevaluators.gemini` to implement your own evaluator,
+or you can use the example evaluators provided in the same module.
+The [Gemini](https://gemini.google.com/) evaluators use the `google-genai` package to call the Gemini API.
+
+```bash
+pip install google-genai
+```
+
+Obtain a [Gemini API key](https://ai.google.dev/gemini-api/docs/api-key) from [Google Cloud](https://console.cloud.google.com/apis/credentials) and set the `gemini` key in `api-keys.json` in your working directory:
+
+```json
+{
+  "gemini": "your Gemini API key"
+}
+```
+
+Then, pass the path to `api-keys.json` to the evaluator with the `--api_keys_file` parameter.
+
+### [Groq](https://groq.com/)
+
+You have a `BaseEvaluator` class in `safellm4se.sampling.myevaluators.groq` to implement your own evaluator,
+or you can use the example evaluators provided in the same module.
+The [Groq](https://groq.com/) evaluators use the `groq` package to call the [Groq](https://groq.com/) API.
+
+```bash
+pip install groq
+```
+
+Obtain a [Groq](https://groq.com/) API key from [Groq](https://console.groq.com/) and set the `groq` key in `api-keys.json` in your working directory:
+```json
+{
+  "groq": "your Groq API key"
+}
+```
+
+Then, pass the path to `api-keys.json` to the evaluator with the `--api_keys_file` parameter.
+
+
+
+## Example evaluator dependencies
 
 The package module `safellm4se.sampling.myevaluators` contains optional example
 evaluators. Install their dependencies only when using them.
@@ -74,69 +116,7 @@ evaluators. Install their dependencies only when using them.
 | Groq random | Calls Groq API | `groq` |
 | Groq HumanEval | Calls Groq API and loads HumanEval | `groq datasets` |
 
-Install all optional packages used by the included examples:
 
-```bash
-python -m pip install "safellm4se[all]"
-```
+## Dockerfile
 
-The Dockerfile currently installs `pandas`, `statsmodels`, `groq`,
-`google-genai`, `datasets`, `loguru`, `pyarrow`, and `matplotlib`, but `pandas`,
-`statsmodels`, and `pyarrow` are not required by the current core Python code.
-
-## Provider Setup
-
-### Ollama
-
-Ollama evaluators call `/api/chat` through Python's standard HTTP library. Start
-Ollama and pull the model used by the evaluator:
-
-```bash
-ollama pull qwen2.5-coder:7b
-ollama pull deepseek-coder:6.7b
-```
-
-The default host in the code is `http://host.docker.internal:11434`, which is
-convenient from Docker. When running directly on the host, pass:
-
-```bash
--- ollama_host=http://localhost:11434
-```
-
-### Gemini
-
-Install the SDK:
-
-```bash
-python -m pip install "safellm4se[gemini]"
-```
-
-Create `api-keys.json` in your working directory and set the `gemini` key:
-
-```json
-{
-  "gemini": "your Gemini API key"
-}
-```
-
-### Groq
-
-Install the SDK:
-
-```bash
-python -m pip install "safellm4se[groq]"
-```
-
-Create `api-keys.json` in your working directory and set the `groq` key:
-
-```json
-{
-  "groq": "your Groq API key"
-}
-```
-
-You can override the path with an evaluator parameter:
-
-```bash
-safellm4se-sample --evaluator safellm4se.sampling.myevaluators.groq.random -- api_keys_file="secrets/api-keys.json"
-```
+We provide the Dockerfile used in the development of SafeLLM4SE.
