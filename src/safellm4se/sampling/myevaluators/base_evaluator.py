@@ -1,6 +1,7 @@
 """Object-oriented example myevaluators for the adaptive sampler."""
 
 import json
+import os
 import re
 from collections.abc import Callable
 from pathlib import Path
@@ -10,8 +11,11 @@ from safellm4se.sampling.evaluators import Evaluator
 
 
 PARAMETER_ALIASES: dict[str, tuple[str, ...]] = {
-    "api_keys_file": ("api_keys",),
+    "standard_deviation": ("standard-deviation",),
+    "success_probability": ("success-probability",),
 }  # Alternative evaluator parameter names accepted by shared evaluators.
+
+DEFAULT_ENV_FILE: str = ".env"  # Default dotenv file read when variables are unset.
 
 
 class BaseEvaluator(Evaluator):
@@ -83,25 +87,54 @@ class BaseEvaluator(Evaluator):
         attribute_value: Any = converter(raw_value) if converter else raw_value
         setattr(self, attribute_name, attribute_value)
 
-    def _load_api_key(self, provider: str, api_keys_file: str) -> str:
-        """Load one provider API key from the configured JSON file.
+    def _load_api_key_from_environment(
+        self,
+        environment_variable_name: str,
+        env_file: str = DEFAULT_ENV_FILE,
+    ) -> str:
+        """Load one API key from the process environment or a dotenv file.
         Args:
-            provider: Provider key to read from the JSON file.
-            api_keys_file: Path to the API keys JSON file.
+            environment_variable_name: Environment variable that stores the API key.
+            env_file: Dotenv file used as fallback when the process variable is unset.
         Returns:
-            The provider API key.
+            The configured API key.
         Raises:
-            FileNotFoundError: If the API keys file does not exist.
-            KeyError: If no API key is configured for the provider.
+            KeyError: If the API key is absent from both sources.
         """
-        path: Path = Path(api_keys_file)
-        if not path.exists():
-            raise FileNotFoundError(f"API key file not found: {path}")
-        api_keys: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        api_key: Any = api_keys.get(provider)
-        if not api_key:
-            raise KeyError(f"No API key configured for provider '{provider}' in {path}")
-        return str(api_key)
+        return self._load_environment_value(
+            environment_variable_name=environment_variable_name,
+            value_description="API key",
+            env_file=env_file,
+        )
+
+    def _load_environment_value(
+        self,
+        environment_variable_name: str,
+        value_description: str,
+        env_file: str = DEFAULT_ENV_FILE,
+    ) -> str:
+        """Load one configuration value from the environment or a dotenv file.
+        Args:
+            environment_variable_name: Environment variable that stores the value.
+            value_description: Human-readable value description for errors.
+            env_file: Dotenv file used as fallback when the process variable is unset.
+        Returns:
+            The configured environment value.
+        Raises:
+            KeyError: If the value is absent from both sources.
+        """
+        environment_value: str | None = os.environ.get(environment_variable_name)
+        if environment_value:
+            return environment_value
+
+        dotenv_values: dict[str, str] = _read_dotenv_values(Path(env_file))
+        environment_value = dotenv_values.get(environment_variable_name)
+        if not environment_value:
+            raise KeyError(
+                f"No {value_description} configured in "
+                f"{environment_variable_name} or {Path(env_file)}."
+            )
+        return environment_value
 
     def _extract_numeric_quality(self, text: str) -> float:
         """Extract the first numeric quality theta from model text.
@@ -117,3 +150,44 @@ class BaseEvaluator(Evaluator):
             message: str = f"Could not extract a numeric quality theta from: {text!r}"
             raise ValueError(message)
         return float(match.group(0))
+
+
+def _read_dotenv_values(path: Path) -> dict[str, str]:
+    """Read dotenv key-value pairs from a file when it exists.
+    Args:
+        path: Dotenv file path.
+    Returns:
+        Parsed environment values keyed by variable name.
+    """
+    if not path.exists():
+        return {}
+
+    values: dict[str, str] = {}
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line: str = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        raw_name: str
+        raw_value: str
+        raw_name, raw_value = line.split("=", 1)
+        name: str = raw_name.strip()
+        value: str = _clean_dotenv_value(raw_value.strip())
+        if name:
+            values[name] = value
+    return values
+
+
+def _clean_dotenv_value(raw_value: str) -> str:
+    """Remove optional dotenv quotes and inline comments from a value.
+    Args:
+        raw_value: Raw dotenv value text.
+    Returns:
+        Cleaned dotenv value.
+    """
+    if len(raw_value) >= 2 and raw_value[0] == raw_value[-1] and raw_value[0] in {
+        "'",
+        '"',
+    }:
+        return raw_value[1:-1]
+    value, _separator, _comment = raw_value.partition(" #")
+    return value.strip()

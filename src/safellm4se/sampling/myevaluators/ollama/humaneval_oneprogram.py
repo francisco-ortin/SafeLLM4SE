@@ -5,7 +5,6 @@ from typing import Any
 from safellm4se.sampling.myevaluators.ollama.common import (
     DEFAULT_MODEL_ID,
     DEFAULT_MODEL_NAME,
-    DEFAULT_OLLAMA_HOST,
     DEFAULT_TEST_TIMEOUT,
     DEFAULT_MAX_TOKENS,
     DEFAULT_SYSTEM_PROMPT,
@@ -26,7 +25,6 @@ MODEL_ID: str = DEFAULT_MODEL_ID  # Unique universal model identifier.
 MODEL_NAME: str = DEFAULT_MODEL_NAME  # Short model name.
 EXPERIMENT_NAME: str = "ollama-humaneval-oneprogram"  # Evaluator experiment name.
 MAX_TOKENS: int = DEFAULT_MAX_TOKENS  # Maximum number of tokens for each LLM response.
-OLLAMA_HOST: str = DEFAULT_OLLAMA_HOST  # Host API for Ollama.
 PROBLEM_NUMBER: int = 1  # HumanEval problem number.
 TEST_TIMEOUT: float = DEFAULT_TEST_TIMEOUT  # Maximum seconds allowed for executing tests.
 SYSTEM_PROMPT: str = DEFAULT_SYSTEM_PROMPT  # Generate Python code only.

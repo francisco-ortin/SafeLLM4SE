@@ -1,6 +1,7 @@
 """Gemini evaluator that generates and tests the complete HumanEval benchmark."""
 
 import time
+from pathlib import Path
 from typing import Any
 
 from loguru import logger
@@ -21,6 +22,11 @@ from safellm4se.sampling.myevaluators.gemini.common import (
     response_prompt_tokens,
     response_text,
     sanitize_completion,
+)
+from safellm4se.sampling.myevaluators.humaneval_checkpoint import (
+    checkpoint_path_from_context,
+    load_completed_results,
+    save_completed_results,
 )
 from safellm4se.sampling.models import SamplingObservation
 
@@ -111,42 +117,82 @@ class GeminiHumanEvalFullBenchEvaluator(GeminiBaseEvaluator):
         skipped_results: list[dict[str, Any]] = []
         total_prompt_tokens: int = 0
         total_completion_tokens: int = 0
+        checkpoint_path: Path | None = checkpoint_path_from_context(
+            context,
+            self.experiment_name,
+            self.model_id,
+        )
+        completed_results: list[dict[str, Any]] = load_completed_results(
+            checkpoint_path
+        )
+        completed_by_problem: dict[int, dict[str, Any]] = {
+            int(result["problem_number"]): result
+            for result in completed_results
+        }
+        if completed_by_problem:
+            logger.info(
+                "Loaded {} completed HumanEval problem results from {}.",
+                len(completed_by_problem),
+                checkpoint_path,
+            )
 
         for problem_index, dataset_item in enumerate(
             load_humaneval_benchmark(),
             start=FIRST_PROBLEM_NUMBER,
         ):
-            logger.debug(f"Evaluating problem {problem_index} in human eval.")
-            try:
-                result: dict[str, Any] = self._evaluate_problem(
+            result: dict[str, Any] | None = completed_by_problem.get(problem_index)
+            evaluated_problem: bool = False
+            if result is not None:
+                logger.debug(
+                    "Reusing checkpointed HumanEval problem {}.",
                     problem_index,
-                    dataset_item,
                 )
-            except RuntimeError as exception:
-                logger.debug(f"Exception in problem {problem_index}: {exception}")
-                if not _is_gemini_quota_or_rate_limit_error(exception):
-                    raise
-                skipped_result: dict[str, Any] = {
-                    "task_id": dataset_item["task_id"],
-                    "problem_number": problem_index,
-                    "entry_point": dataset_item["entry_point"],
-                    "reason": str(exception),
-                }
-                skipped_results.append(skipped_result)
-                logger.warning(
-                    "Skipping HumanEval problem {} after recoverable Gemini "
-                    "request error. Waiting {} seconds before the next problem.",
-                    problem_index,
-                    reservation_ttl_seconds,
-                )
-                if reservation_ttl_seconds > 0 and problem_index < LAST_PROBLEM_NUMBER:
-                    logger.debug(
-                        f"Waiting {reservation_ttl_seconds} seconds before "
-                        "next execution"
+            else:
+                logger.debug(f"Evaluating problem {problem_index} in human eval.")
+                try:
+                    result = self._evaluate_problem(
+                        problem_index,
+                        dataset_item,
                     )
-                    time.sleep(reservation_ttl_seconds)
-                continue
-            if inter_invocation_waiting > 0 and problem_index < LAST_PROBLEM_NUMBER:
+                except RuntimeError as exception:
+                    logger.debug(f"Exception in problem {problem_index}: {exception}")
+                    if not _is_gemini_quota_or_rate_limit_error(exception):
+                        raise
+                    skipped_result: dict[str, Any] = {
+                        "task_id": dataset_item["task_id"],
+                        "problem_number": problem_index,
+                        "entry_point": dataset_item["entry_point"],
+                        "reason": str(exception),
+                    }
+                    skipped_results.append(skipped_result)
+                    logger.warning(
+                        "Skipping HumanEval problem {} after recoverable Gemini "
+                        "request error. Waiting {} seconds before the next problem.",
+                        problem_index,
+                        reservation_ttl_seconds,
+                    )
+                    if (
+                        reservation_ttl_seconds > 0
+                        and problem_index < LAST_PROBLEM_NUMBER
+                    ):
+                        logger.debug(
+                            f"Waiting {reservation_ttl_seconds} seconds before "
+                            "next execution"
+                        )
+                        time.sleep(reservation_ttl_seconds)
+                    continue
+                completed_by_problem[problem_index] = result
+                evaluated_problem = True
+                save_completed_results(
+                    checkpoint_path,
+                    list(completed_by_problem.values()),
+                )
+            result = dict(result)
+            if (
+                evaluated_problem
+                and inter_invocation_waiting > 0
+                and problem_index < LAST_PROBLEM_NUMBER
+            ):
                 logger.debug(
                     "Waiting {} seconds before the next HumanEval problem.",
                     inter_invocation_waiting,
@@ -181,6 +227,9 @@ class GeminiHumanEvalFullBenchEvaluator(GeminiBaseEvaluator):
                 "skipped_programs": len(skipped_results),
                 "skipped_results": skipped_results,
                 "results": benchmark_results,
+                "humaneval_checkpoint_path": (
+                    str(checkpoint_path) if checkpoint_path else None
+                ),
             },
         )
 

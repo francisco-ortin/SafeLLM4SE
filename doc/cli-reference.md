@@ -38,6 +38,10 @@ Evaluator parameters:
 - Use `name=value` or `--name=value`.
 - Hyphens are normalized to underscores. Both syntax forms are accepted.
 - Values are parsed with Python literal syntax when possible.
+- The included Gemini and Groq evaluators read `GEMINI_API_KEY` and `GROQ_API_KEY` API keys from the process
+  environment, falling back to `.env` when the variables are not set.
+- The included Ollama evaluators read `OLLAMA_HOST` from the process
+  environment, falling back to `.env` when the variable is not set.
 
 Examples:
 

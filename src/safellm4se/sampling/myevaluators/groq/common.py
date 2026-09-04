@@ -13,7 +13,7 @@ from safellm4se.sampling.models import SamplingObservation
 
 DEFAULT_MODEL_ID: str = "openai/gpt-oss-20b"
 DEFAULT_MODEL_NAME: str = "groq"
-DEFAULT_API_KEY_NAME: str = "groq"
+API_KEY_ENVIRONMENT_VARIABLE: str = "GROQ_API_KEY"
 DEFAULT_TEST_TIMEOUT: float = 30.0  # Maximum seconds allowed for executing tests.
 DEFAULT_MAX_TOKENS: int = 512  # Maximum number of tokens for the LLM response.
 HUMANEVAL_PROBLEM_COUNT: int = 164  # Number of problems to be solved.
@@ -66,18 +66,6 @@ class GroqBaseEvaluator(BaseEvaluator):
             int,
         )  # Maximum number of generated tokens requested from Groq.
         self._set_attribute_from_parameter(
-            "_api_keys_file",
-            "api_keys_file",
-            config.api_keys_file,
-            str,
-        )  # JSON file containing provider API keys.
-        self._set_attribute_from_parameter(
-            "_api_key_name",
-            "api_key_name",
-            DEFAULT_API_KEY_NAME,
-            str,
-        )  # Key name used to read the Groq API key from the JSON file.
-        self._set_attribute_from_parameter(
             "_system_prompt",
             "system_prompt",
             default_system_prompt,
@@ -124,10 +112,11 @@ class GroqBaseEvaluator(BaseEvaluator):
             A normalized response dictionary with text and token counters.
         Raises:
             RuntimeError: If the Groq SDK request fails.
-            FileNotFoundError: If the API key file does not exist.
-            KeyError: If no Groq API key is configured.
+            KeyError: If GROQ_API_KEY is not configured.
         """
-        api_key: str = self._load_api_key(self._api_key_name, self._api_keys_file)
+        api_key: str = self._load_api_key_from_environment(
+            API_KEY_ENVIRONMENT_VARIABLE
+        )
         return call_groq_chat(
             api_key=api_key,
             model_id=self.model_id,

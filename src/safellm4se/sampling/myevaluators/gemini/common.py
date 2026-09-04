@@ -12,6 +12,7 @@ from safellm4se.sampling.models import SamplingObservation
 
 DEFAULT_MODEL_ID: str = "gemini-3.1-flash-lite"
 DEFAULT_MODEL_NAME: str = "gemini"
+API_KEY_ENVIRONMENT_VARIABLE: str = "GEMINI_API_KEY"
 DEFAULT_TEST_TIMEOUT: float = 30.0  # Maximum seconds allowed for executing tests.
 DEFAULT_MAX_TOKENS: int = 512  # Maximum number of tokens for the LLM response.
 HUMANEVAL_PROBLEM_COUNT: int = 164  # Number of problems to be solved.
@@ -66,12 +67,6 @@ class GeminiBaseEvaluator(BaseEvaluator):
             int,
         )  # Maximum number of generated tokens requested from Gemini.
         self._set_attribute_from_parameter(
-            "_api_keys_file",
-            "api_keys_file",
-            config.api_keys_file,
-            str,
-        )  # JSON file containing provider API keys.
-        self._set_attribute_from_parameter(
             "_system_prompt",
             "system_prompt",
             default_system_prompt,
@@ -120,10 +115,11 @@ class GeminiBaseEvaluator(BaseEvaluator):
             A normalized response dictionary with text and token counters.
         Raises:
             RuntimeError: If the Gemini request fails.
-            FileNotFoundError: If the API key file does not exist.
-            KeyError: If no Gemini API key is configured.
+            KeyError: If GEMINI_API_KEY is not configured.
         """
-        api_key: str = self._load_api_key("gemini", self._api_keys_file)
+        api_key: str = self._load_api_key_from_environment(
+            API_KEY_ENVIRONMENT_VARIABLE
+        )
         return call_gemini_generate_content(
             api_key=api_key,
             model_id=self.model_id,

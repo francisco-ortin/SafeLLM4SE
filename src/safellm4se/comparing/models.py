@@ -31,7 +31,7 @@ class SampleSummary:
     task_id: str  # Task identifier represented by the sample.
     model_name: str  # Human-readable model family or provider label.
     model_id: str  # Provider-specific model identifier used for the call.
-    temperature: str  # Sampling temperature used by all observations.
+    temperature: str  # Optional sampling temperature used by all observations.
     sample_size: int  # Number of observations in the sample.
     prompt_tokens: int  # Sum of prompt tokens across observations.
     completion_tokens: int  # Sum of completion tokens across observations.

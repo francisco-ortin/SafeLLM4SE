@@ -148,7 +148,7 @@ def summarize_sample(rows: list[dict[str, str]]) -> SampleSummary:
         task_id=rows[0]["task_id"],
         model_name=rows[0]["model_name"],
         model_id=rows[0]["model_id"],
-        temperature=rows[0]["temperature"],
+        temperature=rows[0].get("temperature", ""),
         sample_size=len(rows),
         prompt_tokens=prompt_tokens,
         completion_tokens=completion_tokens,

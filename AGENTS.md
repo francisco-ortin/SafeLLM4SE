@@ -2,6 +2,11 @@
 
 This project implements SafeLLM2SE Statistical Evaluation and Reporting for LLM-Based Software Engineering Systems.
 
+## Tools
+
+Recuerda que tienes instalado WSL y que puedes utilizar sus herramientas. Por ejemplo, la herramienta "rg" o, incluso "python3".
+
+
 ## Code Style
 
 - All Python code, variables, functions, and classes must be named in English.

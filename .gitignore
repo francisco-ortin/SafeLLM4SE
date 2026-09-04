@@ -217,5 +217,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-sampling/myevaluators/api-keys.json
-src/safellm4se/sampling/myevaluators/api-keys.json
+/output/humaneval_checkpoints/
+/output/logs/
+

@@ -9,6 +9,7 @@ from safellm4se.sampling.models import SamplingObservation
 EXPERIMENT_NAME: str = "random-binary"
 MODEL_NAME: str = "random-binary"
 MODEL_ID: str = "random-binary-v0"
+DEFAULT_SUCCESS_PROBABILITY: float = 0.5
 
 
 class RandomBinaryEvaluator(BaseEvaluator):
@@ -38,16 +39,28 @@ class RandomBinaryEvaluator(BaseEvaluator):
         """
         return str(self._parameter("model_id", MODEL_ID))
 
-    def __init__(self, success_probability: float = 0.5, **parameters: Any) -> None:
+    def __init__(
+        self,
+        success_probability: float = DEFAULT_SUCCESS_PROBABILITY,
+        **parameters: Any,
+    ) -> None:
         """Initialize the evaluator with a configurable success probability.
         Args:
             success_probability: Probability of generating a successful outcome.
             **parameters: Evaluator parameters, including required temperature.
         Raises:
-            AssertionError: If temperature is missing or is not numeric.
+            ValueError: If success_probability is outside the [0, 1] range.
+            TypeError: If success_probability cannot be converted to float.
         """
         super().__init__(**parameters)
-        self.success_probability: float = success_probability
+        raw_success_probability: Any = self._parameter(
+            "success_probability",
+            success_probability,
+        )
+        # Probability that a generated random value is converted into success.
+        self.success_probability: float = _validate_success_probability(
+            raw_success_probability,
+        )
 
     @property
     def metric_type(self) -> str:
@@ -78,4 +91,20 @@ class RandomBinaryEvaluator(BaseEvaluator):
             completion_tokens=self._completion_tokens,
             total_tokens=self._completion_tokens + self._prompt_tokens,
         )
+
+
+def _validate_success_probability(value: Any) -> float:
+    """Return a validated success probability.
+    Args:
+        value: Candidate success probability.
+    Returns:
+        The success probability as a float.
+    Raises:
+        ValueError: If value is outside the [0, 1] range.
+        TypeError: If value cannot be converted to float.
+    """
+    success_probability: float = float(value)
+    if not 0.0 <= success_probability <= 1.0:
+        raise ValueError("success_probability must be between 0 and 1.")
+    return success_probability
 

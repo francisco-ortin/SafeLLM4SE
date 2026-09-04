@@ -6,7 +6,6 @@ from safellm4se.sampling.config import config
 from safellm4se.sampling.myevaluators.ollama.common import (
     DEFAULT_MODEL_ID,
     DEFAULT_MODEL_NAME,
-    DEFAULT_OLLAMA_HOST,
     OllamaBaseEvaluator,
     response_completion_tokens,
     response_prompt_tokens,
@@ -18,7 +17,6 @@ MODEL_ID: str = DEFAULT_MODEL_ID  # Unique universal model identifier.
 MODEL_NAME: str = DEFAULT_MODEL_NAME  # Short model name.
 EXPERIMENT_NAME: str = "ollama-random"  # Experiment represented by this evaluator.
 MAX_TOKENS: int = 256  # Maximum number of tokens for the LLM response.
-OLLAMA_HOST: str = DEFAULT_OLLAMA_HOST  # Host API for Ollama.
 PROMPT: str = "Give me a random float value between 0 and 1"
 
 

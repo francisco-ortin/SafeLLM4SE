@@ -7,7 +7,6 @@ from loguru import logger
 from safellm4se.sampling.myevaluators.ollama.common import (
     DEFAULT_MODEL_ID,
     DEFAULT_MODEL_NAME,
-    DEFAULT_OLLAMA_HOST,
     DEFAULT_TEST_TIMEOUT,
     DEFAULT_SYSTEM_PROMPT,
     HUMANEVAL_PROBLEM_COUNT,
@@ -27,7 +26,6 @@ MODEL_ID: str = "deepseek-coder:6.7b" # DEFAULT_MODEL_ID  # Unique universal mod
 MODEL_NAME: str = "deepseek-coder" # DEFAULT_MODEL_NAME  # Short model name.
 EXPERIMENT_NAME: str = "ollama-humaneval-fullbench"  # Evaluator experiment name.
 MAX_TOKENS: int = DEFAULT_MAX_TOKENS  # Maximum number of tokens for each LLM response.
-OLLAMA_HOST: str = DEFAULT_OLLAMA_HOST  # Host API for Ollama.
 FIRST_PROBLEM_NUMBER: int = 1  # First one-based HumanEval problem number.
 LAST_PROBLEM_NUMBER: int = HUMANEVAL_PROBLEM_COUNT  # Last HumanEval problem number.
 TEST_TIMEOUT: float = DEFAULT_TEST_TIMEOUT  # Maximum seconds allowed for each test.

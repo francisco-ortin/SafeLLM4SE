@@ -167,14 +167,14 @@ safellm4se-sample --evaluator path.to.module:ConstantEvaluator -- value=0.75
 
 | Module | Class | Metric | Main parameters |
 |---|---|---|---|
-| `safellm4se.sampling.myevaluators.ollama.random` | `OllamaRandomEvaluator` | `continuous` | `prompt`, `temperature`, `model_id`, `model_name`, `max_tokens`, `ollama_host`, `system_prompt` |
-| `safellm4se.sampling.myevaluators.ollama.humaneval_oneprogram` | `OllamaHumanEvalOneProgramEvaluator` | `binary` | `problem_number`, `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `ollama_host`, `system_prompt` |
-| `safellm4se.sampling.myevaluators.ollama.humaneval_fullbench` | `OllamaHumanEvalFullBenchEvaluator` | `continuous` | `test_timeout`, `temperature`, `max_tokens`, `ollama_host`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.ollama.random` | `OllamaRandomEvaluator` | `continuous` | `prompt`, `temperature`, `model_id`, `model_name`, `max_tokens`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.ollama.humaneval_oneprogram` | `OllamaHumanEvalOneProgramEvaluator` | `binary` | `problem_number`, `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.ollama.humaneval_fullbench` | `OllamaHumanEvalFullBenchEvaluator` | `continuous` | `test_timeout`, `temperature`, `max_tokens`, `system_prompt` |
 
 Notes:
 
 - [Ollama](https://ollama.com/) requests are sent to `/api/chat`.
-- The default host is `http://host.docker.internal:11434`.
+- API host source: `OLLAMA_HOST` from the process environment, or `.env` as fallback.
 - `humaneval_fullbench` currently fixes `model_name` to `deepseek-coder` and
   `model_id` to `deepseek-coder:6.7b` through properties in that module.
 
@@ -182,21 +182,23 @@ Notes:
 
 | Module | Class | Metric | Main parameters |
 |---|---|---|---|
-| `safellm4se.sampling.myevaluators.gemini.random` | `GeminiRandomEvaluator` | `continuous` | `prompt`, `temperature`, `model_id`, `model_name`, `max_tokens`, `api_keys_file`, `system_prompt` |
-| `safellm4se.sampling.myevaluators.gemini.humaneval_oneprogram` | `GeminiHumanEvalOneProgramEvaluator` | `binary` | `problem_number`, `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `api_keys_file`, `system_prompt` |
-| `safellm4se.sampling.myevaluators.gemini.humaneval_fullbench` | `GeminiHumanEvalFullBenchEvaluator` | `continuous` | `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `api_keys_file`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.gemini.random` | `GeminiRandomEvaluator` | `continuous` | `prompt`, `temperature`, `model_id`, `model_name`, `max_tokens`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.gemini.humaneval_oneprogram` | `GeminiHumanEvalOneProgramEvaluator` | `binary` | `problem_number`, `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.gemini.humaneval_fullbench` | `GeminiHumanEvalFullBenchEvaluator` | `continuous` | `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `system_prompt` |
 
 Default model identifier: `gemini-3.1-flash-lite`.
+API key source: `GEMINI_API_KEY` from the process environment, or `.env` as fallback.
 
 ### [Groq](https://groq.com/) evaluators
 
 | Module | Class | Metric | Main parameters |
 |---|---|---|---|
-| `safellm4se.sampling.myevaluators.groq.random` | `GroqRandomEvaluator` | `continuous` | `prompt`, `temperature`, `model_id`, `model_name`, `max_tokens`, `api_keys_file`, `api_key_name`, `system_prompt` |
-| `safellm4se.sampling.myevaluators.groq.humaneval_oneprogram` | `GroqHumanEvalOneProgramEvaluator` | `binary` | `problem_number`, `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `api_keys_file`, `api_key_name`, `system_prompt` |
-| `safellm4se.sampling.myevaluators.groq.humaneval_fullbench` | `GroqHumanEvalFullBenchEvaluator` | `continuous` | `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `api_keys_file`, `api_key_name`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.groq.random` | `GroqRandomEvaluator` | `continuous` | `prompt`, `temperature`, `model_id`, `model_name`, `max_tokens`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.groq.humaneval_oneprogram` | `GroqHumanEvalOneProgramEvaluator` | `binary` | `problem_number`, `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `system_prompt` |
+| `safellm4se.sampling.myevaluators.groq.humaneval_fullbench` | `GroqHumanEvalFullBenchEvaluator` | `continuous` | `test_timeout`, `temperature`, `model_id`, `model_name`, `max_tokens`, `system_prompt` |
 
 Default model identifier: `openai/gpt-oss-20b`.
+API key source: `GROQ_API_KEY` from the process environment, or `.env` as fallback.
 
 ## HumanEval evaluation
 

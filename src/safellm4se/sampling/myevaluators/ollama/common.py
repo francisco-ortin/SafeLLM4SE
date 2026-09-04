@@ -16,7 +16,7 @@ from safellm4se.sampling.models import SamplingObservation
 
 DEFAULT_MODEL_ID: str = "qwen2.5-coder:7b"
 DEFAULT_MODEL_NAME: str = "qwen-coder"
-DEFAULT_OLLAMA_HOST: str = "http://host.docker.internal:11434"
+OLLAMA_HOST_ENVIRONMENT_VARIABLE: str = "OLLAMA_HOST"
 DEFAULT_TEST_TIMEOUT: float = 30.0  # Maximum seconds allowed for executing tests.
 DEFAULT_REQUEST_TIMEOUT: float = 5000.0
 DEFAULT_MAX_TOKENS: int = 512  # Maximum number of tokens for the LLM response.
@@ -70,12 +70,6 @@ class OllamaBaseEvaluator(BaseEvaluator):
             int,
         )  # Maximum number of generated tokens requested from Ollama.
         self._set_attribute_from_parameter(
-            "_ollama_host",
-            "ollama_host",
-            DEFAULT_OLLAMA_HOST,
-            str,
-        )  # Base URL of the Ollama API.
-        self._set_attribute_from_parameter(
             "_system_prompt",
             "system_prompt",
             default_system_prompt,
@@ -122,9 +116,14 @@ class OllamaBaseEvaluator(BaseEvaluator):
             The decoded JSON response returned by Ollama.
         Raises:
             RuntimeError: If Ollama returns an HTTP error or cannot be reached.
+            KeyError: If OLLAMA_HOST is not configured.
         """
+        ollama_host: str = self._load_environment_value(
+            environment_variable_name=OLLAMA_HOST_ENVIRONMENT_VARIABLE,
+            value_description="Ollama host",
+        )
         return call_ollama_chat(
-            host=self._ollama_host,
+            host=ollama_host,
             model_id=self.model_id,
             system_prompt=self._system_prompt,
             user_prompt=prompt,

@@ -32,12 +32,12 @@ Typical console output:
 Sample written to output\measurements.csv.
 ```
 
-The sampler appends rows to `output/measurements.csv` (no existing rows are overwritten). Example row produced by the current project data:
+The sampler appends rows to `output/measurements.csv` (no existing rows are overwritten). 
+Example row produced by measuring the performance of the `qwen2.5-coder:7b` model on the [HumanEval](https://humaneval.org/) benchmark through Ollama:
 
-```csv
-date,time,task_id,experiment_name,model_name,model_id,execution_number,prompt_tokens,completion_tokens,total_tokens,theta,metric_type,evaluator,evaluator_parameters,run_id,temperature
-2026-09-02,11:15:35,task-id-54,ollama-humaneval-fullbench,qwen-coder,qwen2.5-coder:7b,1,28081,11703,39784,0.8475609756097561,continuous,OllamaHumanEvalFullBenchEvaluator,"{""temperature"": 2.0}",16835a42-013b-44fc-ba73-002f9b0cb0f4,2.0
-```
+| date | time | task_id | experiment_name | model_name | model_id | execution_number | prompt_tokens | completion_tokens | total_tokens | theta | metric_type | evaluator | evaluator_parameters | run_id | temperature |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-09-02 | 11:15:35 | task-id-54 | ollama-humaneval-fullbench | qwen-coder | qwen2.5-coder:7b | 1 | 28,081 | 11,703 | 39,784 | 0.8476 | continuous | OllamaHumanEvalFullBenchEvaluator | `{"temperature": 2.0}` | 16835a42-013b-44fc-ba73-002f9b0cb0f4 | 2.0 |
 
 ### Passing evaluator parameters
 
@@ -46,7 +46,7 @@ Both forms are accepted:
 
 ```bash
 safellm4se-sample --evaluator safellm4se.sampling.myevaluators.random_normal_evaluator -- mean=60 standard_deviation=10
-safellm4se-sample --evaluator safellm4se.sampling.myevaluators.random_normal_evaluator -- --mean=60 --standard-deviation=10
+safellm4se-sample --evaluator safellm4se.sampling.myevaluators.random_normal_evaluator -- --mean=40 --standard-deviation=20
 ```
 
 Values are converted with Python literal syntax when possible, so booleans,
@@ -56,6 +56,22 @@ The values of these *free* parameters are ignored by SafeLLM4SE, but the evaluat
 Their values are passed to the evaluator constructor so the evaluator can use them.
 In this way, the evaluator can be configured to run different experiments with the same evaluator class.
 One typical use of this feature is to pass the `temperature` parameter to the evaluator, which configures the LLM model temperature.
+
+### Provider environment variables
+
+The included Gemini and Groq evaluators read their credentials from environment
+variables:
+
+```bash
+GEMINI_API_KEY="your Gemini API key"
+GROQ_API_KEY="your Groq API key"
+OLLAMA_HOST="http://localhost:11434"
+```
+
+The included Ollama evaluators read the Ollama API base URL from `OLLAMA_HOST`.
+If these variables are not defined in the process environment, SafeLLM4SE reads
+the same names from a `.env` file in the current working directory. No
+command-line parameter is required for these provider settings.
 
 ## 2. Reporting one task
 
@@ -72,12 +88,12 @@ Typical console output:
 Report written to output\report-qwen-coder.csv.
 ```
 
-Example report row produced by the current project data:
+Example report row produced by an example execution of the `qwen2.5-coder:7b` model on the [HumanEval](https://humaneval.org/) benchmark through Ollama:
 
-```csv
-date,time,task_id,model_name,model_id,temperature,N,prompt_tokens,completion_tokens,total_tokens,theta_mean,theta_median,theta_min,theta_max,theta_type,sd,cv,iqr,q1,q3,ci_method,ci_confidence-level,ci_low,ci_high,ci_width
-2026-09-02,19:09:44,task-id-54,qwen-coder,qwen2.5-coder:7b,2.0,30,842430,336100,1178530,0.8272357723577236,0.8292682926829268,0.7804878048780488,0.8658536585365854,continuous,0.019436705668000667,2.349596852249712,0.018292682926829285,0.8170731707317073,0.8353658536585366,t,95.0,0.8199779871829312,0.834493557532516,0.014515570349584728
-```
+
+| date | time | task_id | model_name | model_id | temperature | N | prompt_tokens | completion_tokens | total_tokens | theta_mean | theta_median | theta_min | theta_max | theta_type | sd | cv | iqr | q1 | q3 | ci_method | ci_confidence-level | ci_low | ci_high | ci_width |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-09-02 | 19:09:44 | task-id-54 | qwen-coder | qwen2.5-coder:7b | 2.0 | 30 | 842,430 | 336,100 | 1,178,530 | 0.8272 | 0.8293 | 0.7805 | 0.8659 | continuous | 0.0194 | 2.3496 | 0.0183 | 0.8171 | 0.8354 | t | 95.0 | 0.8200 | 0.8345 | 0.0145 |
 
 The report includes:
 
@@ -110,12 +126,11 @@ Typical console output:
 Comparison report written to output\compare-independent-deepseek-qwen.csv.
 ```
 
-Example independent comparison row from the current project data:
+Example independent comparison row for an example comparison of the `qwen2.5-coder:7b` and `deepseek-coder:6.7b` models on the [HumanEval](https://humaneval.org/) benchmark through Ollama:
 
-```csv
-date,time,task_id_1,task_id_2,model_name_1,model_name_2,model_id_1,model_id_2,temperature_1,temperature_2,N_1,N_2,total_tokens_1,total_tokens_2,theta_mean_1,theta_mean_2,test_type,estimated_difference,ci_method,ci_low,ci_high,statistical_test,p_value,effect_size_name,effect_size,effect_size_magnitude
-2026-09-02,18:57:29,task-id-54,task-id-56,qwen-coder,deepseek-coder,qwen2.5-coder:7b,deepseek-coder:6.7b,2.0,2.0,30,30,1178530,1611859,0.8272357723577236,0.6189024390243902,independent,0.20833333333333337,bootstrap_difference,0.19369410569105683,0.2223628048780488,Mann-Whitney U,2.8591961948613224e-11,Cliff's delta,1.0,large
-```
+| date | time | task_id_1 | task_id_2 | model_name_1 | model_name_2 | model_id_1 | model_id_2 | temperature_1 | temperature_2 | N_1 | N_2 | total_tokens_1 | total_tokens_2 | theta_mean_1 | theta_mean_2 | test_type | estimated_difference | ci_method | ci_low | ci_high | statistical_test | p_value | effect_size_name | effect_size | effect_size_magnitude |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-09-02 | 18:57:29 | task-id-54 | task-id-56 | qwen-coder | deepseek-coder | qwen2.5-coder:7b | deepseek-coder:6.7b | 2.0 | 2.0 | 30 | 30 | 1,178,530 | 1,611,859 | 0.8272 | 0.6189 | independent | 0.2083 | bootstrap_difference | 0.1937 | 0.2224 | Mann-Whitney U | 2.86e-11 | Cliff's delta | 1.0 | large |
 
 Example plot generated by `safellm4se-compare`:
 
@@ -126,7 +141,7 @@ Example plot generated by `safellm4se-compare`:
 One [HumanEval](https://humaneval.org/) problem through Ollama:
 
 ```bash
-safellm4se-sample --evaluator safellm4se.sampling.myevaluators.ollama.humaneval_oneprogram --task-id ollama-humaneval-1 --n-min 10 --target-ci-width 0.20 --budget-tokens 100000 -- temperature=0.2 problem_number=1 ollama_host=http://localhost:11434 model_id="qwen2.5-coder:7b" model_name="qwen-coder"
+safellm4se-sample --evaluator safellm4se.sampling.myevaluators.ollama.humaneval_oneprogram --task-id ollama-humaneval-1 --n-min 10 --target-ci-width 0.20 --budget-tokens 100000 -- temperature=0.2 problem_number=1 model_id="qwen2.5-coder:7b" model_name="qwen-coder"
 ```
 
 Full [HumanEval](https://humaneval.org/) benchmark through Groq:

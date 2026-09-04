@@ -1,0 +1,55 @@
+# Exported from the PyCharm run configuration: reporting ollama deepseek-coder
+$ErrorActionPreference = "Stop"
+
+$ScriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Resolve-Path (Join-Path $ScriptDirectory "..\..")
+Set-Location $ProjectRoot
+
+if (-not (Test-Path 'report.py')) {
+    throw "Required script not found: report.py"
+}
+
+$Arguments = @(
+    '.\report.py',
+    '--input',
+    'output/measurements.csv',
+    '--output',
+    'output/report-deepseek-coder.csv',
+    '--task-id',
+    'task-id-56',
+    '--task-name',
+    'DeepseekCoder',
+    '--boxplot',
+    'output/deepseek-coder-boxplot.svg',
+    '--violin',
+    'output/deepseek-coder-violin.svg',
+    '--ECDF',
+    'output/deepseek-coder-ecdf.svg',
+    '--raincloud',
+    'output/deepseek-coder-raincloud.svg',
+    '--KDE',
+    'output/deepseek-coder-kde.svg',
+    '--log',
+    'DEBUG'
+)
+
+$PythonCommand = Get-Command python -ErrorAction SilentlyContinue
+if ($PythonCommand) {
+    & $PythonCommand.Source @Arguments
+    exit $LASTEXITCODE
+}
+
+$PythonLauncher = Get-Command py -ErrorAction SilentlyContinue
+if ($PythonLauncher) {
+    & $PythonLauncher.Source @Arguments
+    exit $LASTEXITCODE
+}
+
+$WslCommand = Get-Command wsl -ErrorAction SilentlyContinue
+if ($WslCommand) {
+    $WslArguments = $Arguments -replace '^\.\', './'
+    & $WslCommand.Source python3 @WslArguments
+    exit $LASTEXITCODE
+}
+
+throw "Python was not found in PATH, and WSL is not available."

@@ -8,7 +8,6 @@ REQUIRED_INPUT_FIELDS: tuple[str, ...] = (
     "task_id",
     "model_name",
     "model_id",
-    "temperature",
     "theta",
     "prompt_tokens",
     "completion_tokens",

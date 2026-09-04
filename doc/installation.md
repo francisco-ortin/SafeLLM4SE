@@ -57,8 +57,14 @@ ollama pull qwen2.5-coder:7b
 ollama pull deepseek-coder:6.7b
 ```
 
-The default host in the code is `http://host.docker.internal:11434`, which is
-convenient from Docker, but you can change it to `http://localhost:11434` if you run the code outside Docker.
+Configure the Ollama API base URL with `OLLAMA_HOST`:
+
+```bash
+OLLAMA_HOST="http://localhost:11434"
+```
+
+If `OLLAMA_HOST` is not defined in the process environment, SafeLLM4SE reads it
+from a `.env` file in the current working directory.
 
 ### [Gemini](https://gemini.google.com/)
 
@@ -70,15 +76,14 @@ The [Gemini](https://gemini.google.com/) evaluators use the `google-genai` packa
 pip install google-genai
 ```
 
-Obtain a [Gemini API key](https://ai.google.dev/gemini-api/docs/api-key) from [Google Cloud](https://console.cloud.google.com/apis/credentials) and set the `gemini` key in `api-keys.json` in your working directory:
+Obtain a [Gemini API key](https://ai.google.dev/gemini-api/docs/api-key) from [Google Cloud](https://console.cloud.google.com/apis/credentials) and expose it with `GEMINI_API_KEY`:
 
-```json
-{
-  "gemini": "your Gemini API key"
-}
+```bash
+GEMINI_API_KEY="your Gemini API key"
 ```
 
-Then, pass the path to `api-keys.json` to the evaluator with the `--api_keys_file` parameter.
+If `GEMINI_API_KEY` is not defined in the process environment, SafeLLM4SE reads
+it from a `.env` file in the current working directory.
 
 ### [Groq](https://groq.com/)
 
@@ -90,14 +95,14 @@ The [Groq](https://groq.com/) evaluators use the `groq` package to call the [Gro
 pip install groq
 ```
 
-Obtain a [Groq](https://groq.com/) API key from [Groq](https://console.groq.com/) and set the `groq` key in `api-keys.json` in your working directory:
-```json
-{
-  "groq": "your Groq API key"
-}
+Obtain a [Groq](https://groq.com/) API key from [Groq](https://console.groq.com/) and expose it with `GROQ_API_KEY`:
+
+```bash
+GROQ_API_KEY="your Groq API key"
 ```
 
-Then, pass the path to `api-keys.json` to the evaluator with the `--api_keys_file` parameter.
+If `GROQ_API_KEY` is not defined in the process environment, SafeLLM4SE reads
+it from a `.env` file in the current working directory.
 
 ### [HumanEval](https://humaneval.org/)
 

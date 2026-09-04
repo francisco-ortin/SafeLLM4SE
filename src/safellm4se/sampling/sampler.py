@@ -11,6 +11,10 @@ from safellm4se.sampling.config import config
 from safellm4se.sampling.evaluators import Evaluator, run_evaluator
 from safellm4se.sampling.locking import interprocess_file_lock
 from safellm4se.sampling.models import SamplerSettings, SamplingObservation
+from safellm4se.sampling.myevaluators.humaneval_checkpoint import (
+    list_checkpoint_execution_numbers,
+    remove_checkpoint,
+)
 from safellm4se.sampling.persistence import (
     append_measurement_process_safe,
     create_measurement_row,
@@ -67,8 +71,9 @@ class AdaptiveSampler:
             estimated theta, confidence interval bounds, confidence interval
             width, confidence interval method, and measurements file path.
         Raises:
-            Exception: Re-raises any exception caught while creating or storing
-                one observation after removing its reservation.
+            BaseException: Re-raises any error or interruption caught while
+                creating or storing one observation after removing its
+                reservation.
         """
         model_name: str = evaluator.model_name
         model_id: str = evaluator.model_id
@@ -105,10 +110,17 @@ class AdaptiveSampler:
                     consumed_tokens,
                 )
                 break
+            reusable_execution_numbers: list[int] = list_checkpoint_execution_numbers(
+                self.settings.output_dir,
+                self.settings.task_id,
+                experiment_name,
+                model_id,
+            )
             execution_number: int = reserve_execution_number(
                 self.settings,
                 experiment_name,
                 model_id,
+                reusable_execution_numbers,
             )
             logger.info(
                 "Reserved execution {} for task '{}', experiment '{}', model '{}'.",
@@ -135,6 +147,7 @@ class AdaptiveSampler:
                         "reservation_ttl_seconds": (
                             self.settings.reservation_ttl_seconds
                         ),
+                        "output_dir": self.settings.output_dir,
                     },
                 )
                 row: dict[str, Any] = create_measurement_row(
@@ -150,13 +163,16 @@ class AdaptiveSampler:
                     experiment_name,
                     model_id,
                 )
+                remove_checkpoint(
+                    observation.metadata.get("humaneval_checkpoint_path")
+                )
                 logger.info(
                     "Stored execution {} with theta {} and {} total tokens.",
                     execution_number,
                     observation.theta,
                     observation.total_tokens,
                 )
-            except Exception:
+            except BaseException:
                 logger.exception(
                     "Execution {} failed. Removing its reservation.",
                     execution_number,

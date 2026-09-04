@@ -130,12 +130,15 @@ def reserve_execution_number(
     settings: SamplerSettings,
     experiment_name: str,
     model_id: str,
+    reusable_execution_numbers: list[int] | None = None,
 ) -> int:
     """Reserve the next sample index so parallel processes do not duplicate work.
     Args:
         settings: Sampler settings containing persistence paths and run identity.
         experiment_name: Experiment name used in the reservation key.
         model_id: Model identifier used in the reservation key.
+        reusable_execution_numbers: Incomplete execution numbers that can be
+            resumed because they have persisted partial results.
     Returns:
         The reserved execution number.
     """
@@ -154,6 +157,39 @@ def reserve_execution_number(
             if row_matches(row, settings, experiment_name, model_id)
             and str(row.get("execution_number", "")).isdigit()
         }
+        reusable: list[int] = [
+            execution_number
+            for execution_number in reusable_execution_numbers or []
+            if execution_number not in used
+        ]
+        for execution_number in reusable:
+            matching_reservation: dict[str, Any] | None = next(
+                (
+                    item
+                    for item in reservations
+                    if tuple(item.get("key", []))
+                    == _matching_key(settings, experiment_name, model_id)
+                    and int(item.get("execution_number", -1)) == execution_number
+                ),
+                None,
+            )
+            if matching_reservation is None:
+                reservations.append(
+                    {
+                        "key": list(
+                            _matching_key(settings, experiment_name, model_id)
+                        ),
+                        "execution_number": execution_number,
+                        "run_id": settings.run_id,
+                        "created_at": now,
+                    }
+                )
+            else:
+                matching_reservation["run_id"] = settings.run_id
+                matching_reservation["created_at"] = now
+            _write_reservations(settings.reservations_path, reservations)
+            return execution_number
+
         for item in reservations:
             if tuple(item.get("key", [])) == _matching_key(
                 settings,
