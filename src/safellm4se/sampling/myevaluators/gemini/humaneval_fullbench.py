@@ -177,7 +177,7 @@ class GeminiHumanEvalFullBenchEvaluator(GeminiBaseEvaluator):
                     ):
                         logger.debug(
                             f"Waiting {reservation_ttl_seconds} seconds before "
-                            "next execution"
+                            "next execution."
                         )
                         time.sleep(reservation_ttl_seconds)
                     continue
