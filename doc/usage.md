@@ -41,8 +41,8 @@ Example row produced by measuring the performance of the `qwen2.5-coder:7b` mode
 
 ### Passing evaluator parameters
 
-Arguments after the CLI separator `--` are passed to the evaluator constructor.
-Both forms are accepted:
+Arguments not recognized by the sampler are passed to the evaluator constructor.
+They can be written after the CLI separator `--`, and both forms are accepted:
 
 ```bash
 safellm4se-sample --evaluator safellm4se.sampling.myevaluators.random_normal_evaluator -- mean=60 standard_deviation=10
@@ -56,6 +56,144 @@ The values of these *free* parameters are ignored by SafeLLM4SE, but the evaluat
 Their values are passed to the evaluator constructor so the evaluator can use them.
 In this way, the evaluator can be configured to run different experiments with the same evaluator class.
 One typical use of this feature is to pass the `temperature` parameter to the evaluator, which configures the LLM model temperature.
+
+### Creating a custom evaluator
+
+A user can provide their own evaluator by creating a Python module that defines
+an evaluator class derived from `BaseEvaluator`. The module must be importable
+from the current Python environment, and the value passed to `--evaluator` must
+be the module path without the `.py` extension.
+
+The repository root includes `example_random_evaluator.py`, which defines a
+`RandomNormalEvaluator` that returns continuous random scores:
+
+```python
+"""Example random continuous normal evaluator for the adaptive sampler."""
+
+import random
+from typing import Any
+
+from safellm4se.sampling.myevaluators.base_evaluator import BaseEvaluator
+from safellm4se.sampling.models import SamplingObservation
+
+DEFAULT_MEAN: float = 50.0
+DEFAULT_STANDARD_DEVIATION: float = 25.0
+
+
+class RandomNormalEvaluator(BaseEvaluator):
+    """Example evaluator that returns real-valued quality scores in [0, 100]."""
+
+    @property
+    def model_name(self) -> str:
+        """Return the canonical model name used in persisted measurements.
+        Returns:
+            The random normal model name.
+        """
+        return "random-normal-model"
+
+    @property
+    def experiment_name(self) -> str:
+        """Return the name of the experiment represented by this evaluator.
+        Returns:
+            The random normal experiment name.
+        """
+        return "Random Normal Experiment"
+
+    @property
+    def model_id(self) -> str:
+        """Return the unique model identifier used by the provider.
+        Returns:
+            The configured random normal model identifier.
+        """
+        return "random-normal-v1"
+
+    def __init__(
+        self,
+        mean: float = DEFAULT_MEAN,
+        standard_deviation: float = DEFAULT_STANDARD_DEVIATION,
+        **parameters: Any,
+    ) -> None:
+        """Initialize the evaluator with normal distribution parameters.
+        Args:
+            mean: Mean theta used by the normal distribution.
+            standard_deviation: Standard deviation used by the normal
+                distribution.
+            **parameters: Additional evaluator parameters.
+        Raises:
+            ValueError: If standard_deviation is negative.
+            TypeError: If mean or standard_deviation cannot be converted to float.
+        """
+        super().__init__(**parameters)
+        raw_mean: Any = self._parameter("mean", mean)
+        # Mean used to center the generated normal distribution.
+        self.mean: float = float(raw_mean)
+        raw_standard_deviation: Any = self._parameter(
+            "standard_deviation",
+            standard_deviation,
+        )
+        self.standard_deviation: float = float(raw_standard_deviation)
+
+    @property
+    def metric_type(self) -> str:
+        """Return the continuous variable type used by this evaluator.
+        Returns:
+            The continuous metric type.
+        """
+        return "continuous"
+
+    def run(self, **context: Any) -> SamplingObservation | None:
+        """Generate one random continuous observation and update evaluator state.
+        Args:
+            **context: Unused runtime context values.
+        Returns:
+            A sampling observation containing the random continuous theta and
+            token counts.
+        """
+        del context
+        self._theta = min(
+            100.0,
+            max(0.0, random.gauss(mu=self.mean, sigma=self.standard_deviation)),
+        )
+        self._prompt_tokens = random.randint(10, 100)
+        self._completion_tokens = random.randint(10, 100)
+        return SamplingObservation(
+            theta=self._theta,
+            experiment_name=self.experiment_name,
+            model_name=self.model_name,
+            model_id=self.model_id,
+            prompt_tokens=self._prompt_tokens,
+            completion_tokens=self._completion_tokens,
+            total_tokens=self._completion_tokens + self._prompt_tokens,
+        )
+```
+
+The evaluator must satisfy these requirements:
+
+- It must inherit from `BaseEvaluator`, as `RandomNormalEvaluator` does in the
+  class definition.
+- It must expose metadata properties used in the measurements file:
+  `model_name`, `experiment_name`, and `model_id`.
+- It must expose `metric_type`, usually `"binary"` for pass/fail evaluations or
+  `"continuous"` for numeric scores.
+- It must implement `run()`. SafeLLM4SE calls this method once per sample, and
+  the method must return a `SamplingObservation` with at least `theta`,
+  experiment/model metadata, and token counts.
+- Its constructor can define any experiment-specific parameters. The example
+  accepts `mean` and `standard_deviation`, reads them with `_parameter()`, and
+  stores them as typed attributes used later by `run()`.
+
+For example, from the repository root:
+
+```bash
+safellm4se-sample --evaluator example_random_evaluator --target-ci-width 10 --mean=60 --standard-deviation=10
+```
+
+In this command, `mean` and `standard-deviation` are not interpreted by
+SafeLLM4SE itself. SafeLLM4SE converts the option names to constructor
+parameters and passes them to the evaluator, so `--standard-deviation` is passed
+as `standard_deviation`. A custom evaluator can accept any parameters needed for
+the experiment, such as model identifiers, provider settings, benchmark names,
+generation temperatures, prompts, or paths to local resources.
 
 ### Provider environment variables
 
