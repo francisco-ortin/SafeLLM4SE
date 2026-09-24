@@ -41,21 +41,16 @@ def row_matches(
     experiment_name: str,
     model_id: str,
 ) -> bool:
-    """Return whether a measurement row belongs to the current sampling key.
+    """Return whether a measurement row belongs to the current task.
     Args:
         row: Measurement row to inspect.
         settings: Sampler settings containing the target task identifier.
-        experiment_name: Expected experiment name.
-        model_id: Expected model identifier.
+        experiment_name: Ignored legacy sampling key component.
+        model_id: Ignored legacy sampling key component.
     Returns:
-        True if the row belongs to the task, experiment, and model id;
-        otherwise, False.
+        True if the row belongs to the task; otherwise, False.
     """
-    return (
-        str(row.get("task_id")) == settings.task_id
-        and str(row.get("experiment_name", "")) == experiment_name
-        and _row_model_id(row) == model_id
-    )
+    return str(row.get("task_id")) == settings.task_id
 
 
 def read_current_theta(
@@ -369,16 +364,16 @@ def _matching_key(
     settings: SamplerSettings,
     experiment_name: str,
     model_id: str,
-) -> tuple[str, str, str]:
-    """Return the reservation key for one task, experiment, and model id.
+) -> tuple[str]:
+    """Return the reservation key for one task.
     Args:
         settings: Sampler settings containing the task identifier.
-        experiment_name: Experiment name for the reservation.
-        model_id: Model identifier for the reservation.
+        experiment_name: Ignored legacy sampling key component.
+        model_id: Ignored legacy sampling key component.
     Returns:
         A reservation key tuple.
     """
-    return settings.task_id, experiment_name, model_id
+    return (settings.task_id,)
 
 
 def _row_model_name(row: dict[str, Any]) -> str:

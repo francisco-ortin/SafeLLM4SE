@@ -2,11 +2,11 @@
 
 import time
 from typing import Any
+
 from loguru import logger
 
 from safellm4se.sampling.myevaluators.ollama.common import (
-    DEFAULT_MODEL_ID,
-    DEFAULT_MODEL_NAME,
+    DEFAULT_MAX_TOKENS,
     DEFAULT_TEST_TIMEOUT,
     DEFAULT_SYSTEM_PROMPT,
     HUMANEVAL_PROBLEM_COUNT,
@@ -18,18 +18,18 @@ from safellm4se.sampling.myevaluators.ollama.common import (
     response_prompt_tokens,
     response_text,
     sanitize_completion,
-    DEFAULT_MAX_TOKENS,
 )
 from safellm4se.sampling.models import SamplingObservation
 
-MODEL_ID: str = "deepseek-coder:6.7b" # DEFAULT_MODEL_ID  # Unique universal model identifier.
-MODEL_NAME: str = "deepseek-coder" # DEFAULT_MODEL_NAME  # Short model name.
+MODEL_ID: str = "deepseek-coder:6.7b"  # Unique universal model identifier.
+MODEL_NAME: str = "deepseek-coder"  # Short model name.
 EXPERIMENT_NAME: str = "ollama-humaneval-fullbench"  # Evaluator experiment name.
 MAX_TOKENS: int = DEFAULT_MAX_TOKENS  # Maximum number of tokens for each LLM response.
 FIRST_PROBLEM_NUMBER: int = 1  # First one-based HumanEval problem number.
 LAST_PROBLEM_NUMBER: int = HUMANEVAL_PROBLEM_COUNT  # Last HumanEval problem number.
 TEST_TIMEOUT: float = DEFAULT_TEST_TIMEOUT  # Maximum seconds allowed for each test.
 SYSTEM_PROMPT: str = DEFAULT_SYSTEM_PROMPT  # Generate Python code only.
+OLLAMA_ERROR_WAIT_SECONDS: float = 5.0  # Delay after a recoverable Ollama error.
 
 
 class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
@@ -65,8 +65,7 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
             A sampling observation whose theta is the proportion of HumanEval
             programs that passed their tests.
         Raises:
-            RuntimeError: If Ollama returns an HTTP error, cannot be reached, or
-                the HumanEval dataset cannot be loaded.
+            RuntimeError: If the HumanEval dataset cannot be loaded.
         """
         inter_invocation_waiting: float = float(
             context.get("inter_invocation_waiting", 0.0) or 0.0
@@ -80,12 +79,30 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
             start=FIRST_PROBLEM_NUMBER,
         ):
             logger.debug(f"Evaluating problem {problem_index} in human eval.")
-            result: dict[str, Any] = self._evaluate_problem(
-                problem_index,
-                dataset_item,
-            )
+            try:
+                result: dict[str, Any] = self._evaluate_problem(
+                    problem_index,
+                    dataset_item,
+                )
+            except RuntimeError as exception:
+                logger.warning(
+                    "Skipping HumanEval problem {} after Ollama error: {}. "
+                    "Waiting {} seconds before continuing.",
+                    problem_index,
+                    exception,
+                    OLLAMA_ERROR_WAIT_SECONDS,
+                )
+                time.sleep(OLLAMA_ERROR_WAIT_SECONDS)
+                result = self._failed_problem_result(
+                    problem_index,
+                    dataset_item,
+                    exception,
+                )
             if inter_invocation_waiting > 0 and problem_index < LAST_PROBLEM_NUMBER:
-                logger.debug("Waiting {} seconds before the next HumanEval problem.", inter_invocation_waiting)
+                logger.debug(
+                    "Waiting {} seconds before the next HumanEval problem.",
+                    inter_invocation_waiting,
+                )
                 time.sleep(inter_invocation_waiting)
             total_prompt_tokens += int(result.pop("prompt_tokens"))
             total_completion_tokens += int(result.pop("completion_tokens"))
@@ -148,6 +165,32 @@ class OllamaHumanEvalFullBenchEvaluator(OllamaBaseEvaluator):
             "completion": completion,
             "prompt_tokens": response_prompt_tokens(response_data),
             "completion_tokens": response_completion_tokens(response_data),
+        }
+
+    def _failed_problem_result(
+        self,
+        problem_index: int,
+        dataset_item: dict[str, Any],
+        exception: RuntimeError,
+    ) -> dict[str, Any]:
+        """Build a failed benchmark result for a recoverable Ollama error.
+        Args:
+            problem_index: One-based HumanEval problem number.
+            dataset_item: HumanEval dataset item.
+            exception: Ollama error raised while generating the completion.
+        Returns:
+            A benchmark result dictionary with zero token counts.
+        """
+        return {
+            "task_id": dataset_item["task_id"],
+            "problem_number": problem_index,
+            "entry_point": dataset_item["entry_point"],
+            "passed": False,
+            "result": f"failed: Ollama error ({str(exception)})",
+            "raw_text": "",
+            "completion": "",
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
         }
 
     @property

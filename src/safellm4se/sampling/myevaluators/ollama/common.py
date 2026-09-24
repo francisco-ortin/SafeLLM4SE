@@ -3,11 +3,12 @@
 import json
 import multiprocessing
 import re
+import socket
 from multiprocessing.queues import Queue
 from queue import Empty
 from typing import Any, ClassVar
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin
+from urllib.parse import ParseResult, urljoin, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
 from safellm4se.sampling.config import config
@@ -17,6 +18,17 @@ from safellm4se.sampling.models import SamplingObservation
 DEFAULT_MODEL_ID: str = "qwen2.5-coder:7b"
 DEFAULT_MODEL_NAME: str = "qwen-coder"
 OLLAMA_HOST_ENVIRONMENT_VARIABLE: str = "OLLAMA_HOST"
+DOCKER_INTERNAL_HOSTNAME: str = "host.docker.internal"
+LOCAL_OLLAMA_HOSTNAMES: tuple[str, ...] = (
+    "localhost",
+    "127.0.0.1",
+)  # Local hostnames used when Docker's internal hostname is unavailable.
+DOCKER_DEFAULT_GATEWAY_HOSTNAME: str = (
+    "172.17.0.1"
+)  # Typical Docker bridge gateway used on Linux hosts.
+LINUX_ROUTE_TABLE_PATH: str = (
+    "/proc/net/route"
+)  # Linux route table used to detect the container gateway.
 DEFAULT_TEST_TIMEOUT: float = 30.0  # Maximum seconds allowed for executing tests.
 DEFAULT_REQUEST_TIMEOUT: float = 5000.0
 DEFAULT_MAX_TOKENS: int = 512  # Maximum number of tokens for the LLM response.
@@ -75,6 +87,12 @@ class OllamaBaseEvaluator(BaseEvaluator):
             default_system_prompt,
             str,
         )  # System prompt used for chat requests.
+        self._set_attribute_from_parameter(
+            "_ollama_host",
+            "ollama_host",
+            "",
+            str,
+        )  # Optional Ollama API host passed as an evaluator parameter.
 
     @property
     def model_name(self) -> str:
@@ -118,7 +136,7 @@ class OllamaBaseEvaluator(BaseEvaluator):
             RuntimeError: If Ollama returns an HTTP error or cannot be reached.
             KeyError: If OLLAMA_HOST is not configured.
         """
-        ollama_host: str = self._load_environment_value(
+        ollama_host: str = self._ollama_host or self._load_environment_value(
             environment_variable_name=OLLAMA_HOST_ENVIRONMENT_VARIABLE,
             value_description="Ollama host",
         )
@@ -195,21 +213,123 @@ def call_ollama_chat(
         },
         "stream": False,
     }
-    request: Request = Request(
+    last_exception: URLError | None = None
+    attempted_hosts: list[str] = []
+    for candidate_host in _ollama_host_candidates(host):
+        attempted_hosts.append(candidate_host)
+        request: Request = _build_ollama_chat_request(candidate_host, payload)
+        try:
+            with urlopen(request, timeout=DEFAULT_REQUEST_TIMEOUT) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except HTTPError as exception:
+            raise RuntimeError(
+                f"Ollama request failed with HTTP {exception.code}"
+            ) from exception
+        except URLError as exception:
+            last_exception = exception
+
+    attempted_hosts_text: str = ", ".join(attempted_hosts)
+    raise RuntimeError(
+        f"Ollama is not reachable at any configured host: {attempted_hosts_text}"
+    ) from last_exception
+
+
+def _build_ollama_chat_request(host: str, payload: dict[str, Any]) -> Request:
+    """Build one Ollama chat HTTP request.
+    Args:
+        host: Base URL of the Ollama API.
+        payload: JSON-serializable Ollama chat request body.
+    Returns:
+        The HTTP request ready to be sent to the Ollama API.
+    """
+    return Request(
         urljoin(host.rstrip("/") + "/", "api/chat"),
         data=json.dumps(payload).encode("utf-8"),
         headers={"Content-Type": "application/json"},
         method="POST",
     )
+
+
+def _ollama_host_candidates(host: str) -> list[str]:
+    """Return the Ollama hosts to try for one configured host.
+    Args:
+        host: Configured Ollama API host.
+    Returns:
+        The configured host plus local fallbacks when Docker's internal hostname
+        is configured.
+    """
+    candidates: list[str] = [host]
+    parsed_host: ParseResult = urlparse(host)
+    if parsed_host.hostname != DOCKER_INTERNAL_HOSTNAME:
+        return candidates
+
+    gateway_host: str = _docker_gateway_hostname()
+    local_hostnames: tuple[str, ...] = (*LOCAL_OLLAMA_HOSTNAMES, gateway_host)
+    for local_hostname in local_hostnames:
+        local_host: str = _replace_url_hostname(host, local_hostname)
+        if local_host not in candidates:
+            candidates.append(local_host)
+    return candidates
+
+
+def _replace_url_hostname(url: str, hostname: str) -> str:
+    """Replace the hostname component of a URL.
+    Args:
+        url: Original URL.
+        hostname: Replacement hostname.
+    Returns:
+        The URL with the replacement hostname and the original scheme and port.
+    """
+    parsed_url: ParseResult = urlparse(url)
+    netloc: str = hostname
+    if parsed_url.port is not None:
+        netloc = f"{netloc}:{parsed_url.port}"
+    return urlunparse(
+        (
+            parsed_url.scheme,
+            netloc,
+            parsed_url.path,
+            parsed_url.params,
+            parsed_url.query,
+            parsed_url.fragment,
+        )
+    )
+
+
+def _docker_gateway_hostname() -> str:
+    """Return a best-effort Docker bridge gateway hostname.
+    Returns:
+        The Docker hostname IP, the detected default gateway IP, or the common
+        Docker bridge gateway address when neither can be detected.
+    """
     try:
-        with urlopen(request, timeout=DEFAULT_REQUEST_TIMEOUT) as response:
-            return json.loads(response.read().decode("utf-8"))
-    except HTTPError as exception:
-        raise RuntimeError(
-            f"Ollama request failed with HTTP {exception.code}"
-        ) from exception
-    except URLError as exception:
-        raise RuntimeError(f"Ollama is not reachable at {host}") from exception
+        return socket.gethostbyname(DOCKER_INTERNAL_HOSTNAME)
+    except OSError:
+        route_gateway: str | None = _linux_default_gateway()
+        if route_gateway:
+            return route_gateway
+        return DOCKER_DEFAULT_GATEWAY_HOSTNAME
+
+
+def _linux_default_gateway() -> str | None:
+    """Return the Linux default gateway from /proc/net/route.
+    Returns:
+        The default gateway IP address, or None when it cannot be detected.
+    """
+    try:
+        with open(LINUX_ROUTE_TABLE_PATH, encoding="utf-8") as route_table:
+            next(route_table, None)
+            for route_line in route_table:
+                route_fields: list[str] = route_line.strip().split()
+                if len(route_fields) < 3:
+                    continue
+                destination: str = route_fields[1]
+                gateway_hex: str = route_fields[2]
+                if destination == "00000000":
+                    return socket.inet_ntoa(bytes.fromhex(gateway_hex)[::-1])
+    except OSError:
+        return None
+    return None
 
 
 def response_text(response_data: dict[str, Any]) -> str:
