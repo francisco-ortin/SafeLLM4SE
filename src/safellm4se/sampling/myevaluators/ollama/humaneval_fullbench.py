@@ -21,9 +21,9 @@ from safellm4se.sampling.myevaluators.ollama.common import (
 )
 from safellm4se.sampling.models import SamplingObservation
 
-MODEL_ID: str = "deepseek-coder:6.7b"  # Unique universal model identifier.
-MODEL_NAME: str = "deepseek-coder"  # Short model name.
-EXPERIMENT_NAME: str = "ollama-humaneval-fullbench"  # Evaluator experiment name.
+MODEL_ID: str = "qwen2.5-coder:7b"  # Unique universal model identifier.
+MODEL_NAME: str = "qwen-coder"  # Short model name.
+EXPERIMENT_NAME: str = "qwen-coder-humaneval-fullbench"  # Evaluator experiment name.
 MAX_TOKENS: int = DEFAULT_MAX_TOKENS  # Maximum number of tokens for each LLM response.
 FIRST_PROBLEM_NUMBER: int = 1  # First one-based HumanEval problem number.
 LAST_PROBLEM_NUMBER: int = HUMANEVAL_PROBLEM_COUNT  # Last HumanEval problem number.

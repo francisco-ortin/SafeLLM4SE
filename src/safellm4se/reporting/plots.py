@@ -86,6 +86,8 @@ def create_boxplot(values: list[float], output_path: Path, title: str) -> None:
     axis.set_ylabel("Theta")
     axis.set_xticks([1])
     axis.set_xticklabels(["sample"])
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     _save_figure(figure, output_path)
 
 
@@ -117,6 +119,8 @@ def create_violin_plot(values: list[float], output_path: Path, title: str) -> No
     axis.set_ylabel("Theta")
     axis.set_xticks([1])
     axis.set_xticklabels(["sample"])
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     _save_figure(figure, output_path)
 
 
@@ -145,6 +149,8 @@ def create_ecdf_plot(values: list[float], output_path: Path, title: str) -> None
     axis.set_xlabel("Theta")
     axis.set_ylabel("ECDF")
     axis.set_ylim(0.0, 1.02)
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     _save_figure(figure, output_path)
 
 
@@ -197,6 +203,8 @@ def create_raincloud_plot(values: list[float], output_path: Path, title: str) ->
     axis.set_xlabel("Theta")
     axis.set_yticks([])
     axis.set_ylim(-0.36, 0.42)
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     _save_figure(figure, output_path)
 
 
@@ -220,6 +228,8 @@ def create_kde_plot(values: list[float], output_path: Path, title: str) -> None:
     axis.set_title(title)
     axis.set_xlabel("Theta")
     axis.set_ylabel("Density")
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     _save_figure(figure, output_path)
 
 

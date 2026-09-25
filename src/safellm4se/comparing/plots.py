@@ -105,6 +105,8 @@ def create_comparison_boxplot(
     axis.set_title(title)
     axis.set_ylabel("Theta")
     axis.grid(axis="y", alpha=0.25)
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     _save_figure(figure, output_path)
 
 
@@ -147,6 +149,8 @@ def create_comparison_violin_plot(
     axis.set_xticks([1, 2])
     axis.set_xticklabels([label_1, label_2])
     axis.grid(axis="y", alpha=0.25)
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     _save_figure(figure, output_path)
 
 
@@ -189,6 +193,8 @@ def create_comparison_ecdf_plot(
     axis.set_ylabel("ECDF")
     axis.set_ylim(0.0, 1.02)
     axis.grid(alpha=0.25)
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     axis.legend()
     _save_figure(figure, output_path)
 
@@ -224,6 +230,26 @@ def create_comparison_raincloud_plot(
     axis.set_yticks([1.0, 0.0])
     axis.set_yticklabels([label_1, label_2])
     axis.grid(axis="x", alpha=0.25)
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
+
+    import matplotlib.patches as mpatches
+
+    color_1 = "#2563eb"
+    color_2 = "#059669"
+    handles = [
+        mpatches.Patch(color=color_1, label=label_1),
+        mpatches.Patch(color=color_2, label=label_2),
+    ]
+
+    axis.legend(
+        handles=handles,
+        loc="lower right",
+        frameon=True,  # Muestra el marco
+        facecolor="white",  # Fondo blanco
+        framealpha=1.0,  # Opacidad al 100% (tapa lo que esté debajo)
+        edgecolor="#d1d5db",  # Borde gris claro (puedes cambiarlo o quitarlo)
+    )
     _save_figure(figure, output_path)
 
 
@@ -263,6 +289,8 @@ def create_comparison_kde_plot(
     axis.set_ylabel("Density")
     axis.grid(alpha=0.25)
     axis.legend()
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
     _save_figure(figure, output_path)
 
 
